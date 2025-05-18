@@ -1,9 +1,10 @@
 from PIL import Image
 
-ascii = "@%#*+=-:. "
+# ascii = "@%#*+=-:. "
+ascii = "MNFVI*:."
 
 output = []
-file = ""
+file = "Great Wave.jpg"
 
 img = Image.open("assets/" + file)
 img = img.convert("L")
@@ -11,7 +12,7 @@ img = img.convert("L")
 w0, h0 = img.width, img.height
 aspect = h0 / w0
 
-w1 = 300
+w1 = 256
 h1 = int(aspect*w1*0.5)
 
 img = img.resize((w1, h1))
