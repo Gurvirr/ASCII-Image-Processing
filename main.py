@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 # ascii = "@%#*+=-:. "
 ascii = "MNFVI*:."
@@ -8,6 +8,8 @@ file = "Great Wave.jpg"
 
 img = Image.open("assets/" + file)
 img = img.convert("L")
+
+img = ImageEnhance.Contrast(img).enhance(3.0)
 
 w0, h0 = img.width, img.height
 aspect = h0 / w0
