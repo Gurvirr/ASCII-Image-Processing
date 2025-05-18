@@ -1,0 +1,16 @@
+body {
+  font-family: monospace;
+  background: #ffffff;
+  color: #000000;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+pre#ascii {
+  margin: 0;
+  white-space: pre;
+  font-size: 9px;
+}
