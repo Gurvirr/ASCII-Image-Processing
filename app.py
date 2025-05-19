@@ -1,7 +1,6 @@
 from flask import Flask, render_template
 from PIL import Image, ImageEnhance
 
-
 app = Flask(__name__)
 
 def image_to_ascii():

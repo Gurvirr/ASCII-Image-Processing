@@ -12,20 +12,25 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  padding-top: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 pre#ascii-header {
-  font-size: 11px;
+  font-size: 5px;
   text-align: center;
+  margin-bottom: 10px;
+  white-space: pre;
 }
 
 pre#ascii {
   margin: 0;
   white-space: pre;
-  font-size: 9px;
+  font-size: 8px;
   text-align: center;
 }
 
