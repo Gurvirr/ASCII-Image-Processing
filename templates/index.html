@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>ASCII Art Viewer</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-  <pre id="ascii">{{ ascii_home }}</pre>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ASCII Art Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+    <p> Image to ASCII </p>
+    <pre id="ascii">{{ ascii_home }}</pre>
+  </body>
 </html>
