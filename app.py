@@ -42,4 +42,4 @@ def home():
     return render_template("index.html", ascii_home=ascii_home)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
