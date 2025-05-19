@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   </head>
   <body>
-    <p> Image to ASCII </p>
     <pre id="ascii">{{ ascii_home }}</pre>
+    
+<div class="left-nav">
+  <div class="spinner">
+    <span id="spinner-char">—</span>
+  </div>
+</div>
+
+
+    <script src="{{ url_for('static', filename='js/spinner.js') }}"></script>
   </body>
 </html>

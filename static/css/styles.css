@@ -28,3 +28,19 @@ pre#ascii {
   font-size: 9px;
   text-align: center;
 }
+
+.spinner {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: #0D0D0E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FAF6EF;
+  font-size: 14px;
+  font-family: 'FKRasterGrotesk', monospace;
+}
