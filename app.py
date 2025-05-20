@@ -35,7 +35,7 @@ def image_to_ascii():
         output.append(row_str)
     return "\n".join(output)
 
-@app.route("/ascii")
+@app.route("/")
 def home():
     ascii_home = image_to_ascii()
     return render_template("index.html", ascii_home=ascii_home)
