@@ -1,8 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const themeIconContainer = document.getElementById('theme-icon-container');
+    const rightThemePrompt = document.getElementById('right-theme-prompt');
+
+    function updateRightThemePromptText() {
+        if (!rightThemePrompt) return;
+        if (document.body.classList.contains('dark-theme')) {
+            rightThemePrompt.textContent = "Press 't' for light";
+        } else {
+            rightThemePrompt.textContent = "Press 't' for dark";
+        }
+    }
 
     function toggleTheme() {
         document.body.classList.toggle('dark-theme');
+        updateRightThemePromptText();
     }
 
     // Toggle theme on 't' key press
@@ -19,4 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleTheme();
         });
     }
+
+    // Set initial right theme prompt text
+    updateRightThemePromptText();
 }); 
