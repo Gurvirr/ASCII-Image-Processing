@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   </head>
   <body>
+    <div id="theme-icon-container">
+        <img id="light-theme-icon" src="{{ url_for('static', filename='images/light-mode.png') }}" alt="Light theme icon">
+        <img id="dark-theme-icon" src="{{ url_for('static', filename='images/dark-mode.png') }}" alt="Dark theme icon">
+    </div>
     <pre id="ascii-header">
        ##             #######          # ###           #####  #   #####  #            #####  #                                                   ##### ##                                                                                            
      /####           /       ###      /  /###  /     ######  /  ######  /           ######  /                                                  ######  /###                                                                #                          
@@ -38,5 +42,6 @@
 </div>
 
     <script src="{{ url_for('static', filename='js/spinner.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme-toggle.js') }}"></script>
   </body>
 </html>
