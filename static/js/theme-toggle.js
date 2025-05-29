@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateRightThemePromptText() {
         if (!rightThemePrompt) return;
         if (document.body.classList.contains('dark-theme')) {
-            rightThemePrompt.textContent = "Press 't' for light";
+            rightThemePrompt.textContent = "Press T for light";
         } else {
-            rightThemePrompt.textContent = "Press 't' for dark";
+            rightThemePrompt.textContent = "Press T for dark";
         }
     }
 
