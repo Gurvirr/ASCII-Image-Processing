@@ -7,7 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   </head>
   <body>
-    <div id="side-nav-panel"></div>
+    <div id="side-nav-panel">
+        <p class="nav-panel-title">ASCII Command Terminal</p>
+        <div class="command-input-area">
+            <span class="command-prompt">:/</span>
+            <input type="text" id="command-input" placeholder="Enter Command">
+        </div>
+        <div id="command-output-container">
+            <!-- Command outputs will appear here -->
+        </div>
+    </div>
     <span id="right-theme-prompt">Press T for dark</span>
     <div id="theme-icon-container">
         <img id="light-theme-icon" src="{{ url_for('static', filename='images/light-mode.png') }}" alt="Light theme icon">

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const themeIconContainer = document.getElementById('theme-icon-container');
     const rightThemePrompt = document.getElementById('right-theme-prompt');
+    const commandInput = document.getElementById('command-input');
 
     function updateRightThemePromptText() {
         if (!rightThemePrompt) return;
@@ -16,21 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
         updateRightThemePromptText();
     }
 
-    // Toggle theme on 't' key press
     document.addEventListener('keydown', function(event) {
         if (event.key === 't') {
-            event.preventDefault();
-            toggleTheme();
+            if (event.target !== commandInput && 
+                !['INPUT', 'TEXTAREA'].includes(event.target.tagName)) {
+                event.preventDefault();
+                toggleTheme();
+            }
         }
     });
 
-    // Toggle theme on icon click
     if (themeIconContainer) {
         themeIconContainer.addEventListener('click', function() {
             toggleTheme();
         });
     }
 
-    // Set initial right theme prompt text
     updateRightThemePromptText();
 }); 

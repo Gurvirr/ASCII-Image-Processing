@@ -153,12 +153,131 @@ body.dark-theme #dark-theme-icon {
   width: var(--side-nav-panel-width);
   height: calc(100vh - (2 * var(--side-nav-panel-margin)));
   background-color: #F1EDE7;
-  padding: 30px;
+  padding: 30px 30px 30px 16px;
+  text-align: left;
   box-sizing: border-box;
   z-index: 1002;
   transition: left 0.20s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease-in-out;
   border-radius: 5px;
 }
+
+/* Styles for content within side-nav-panel */
+#side-nav-panel .nav-panel-title {
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+#side-nav-panel .command-input-area {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#side-nav-panel .command-prompt {
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+#side-nav-panel #command-input {
+  flex-grow: 1;
+  background-color: transparent;
+  border: none;
+  border-radius: 3px;
+  padding: 6px 8px;
+  font-family: 'FKRasterGrotesk', monospace;
+  font-size: 12px;
+  color: inherit;
+  outline: none;
+}
+
+#side-nav-panel #command-input::placeholder {
+  color: inherit;
+  opacity: 0.4;
+}
+
+#side-nav-panel #command-output-container {
+  min-height: 50px;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes slideInDownAndLeft {
+  0% {
+    transform: translate(15px, -15px);
+    opacity: 0;
+    max-height: 0;
+  }
+  50% {
+    transform: translate(15px, 0); /* Moved down, still to the right */
+    opacity: 1;
+    max-height: 5em; /* Expand height during first part of animation */
+  }
+  100% {
+    transform: translate(0, 0); /* Moved left into final position */
+    opacity: 1;
+    max-height: 5em;
+  }
+}
+
+@keyframes fadeOutAndSlideUp {
+  0% {
+    opacity: 1;
+    max-height: 5em; /* Start from its visible height */
+    transform: translateY(0);
+    margin-bottom: 5px; /* Keep original margin at start */
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-15px); /* Slide up */
+    margin-bottom: 0; /* Collapse margin */
+  }
+}
+
+#side-nav-panel #command-output-container p {
+  font-size: 12px;
+  margin-bottom: 5px;
+  margin-top: 0;
+  opacity: 0; /* Initial state before any animation */
+  max-height: 0; /* Initial state before any animation */
+  overflow: hidden;
+  position: relative;
+  padding-left: 1.2em;
+  /* transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin-bottom 0.3s ease-out; Removed */
+}
+
+#side-nav-panel #command-output-container p::before {
+  content: "» ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0; /* Initial opacity, to fade in with parent */
+  transition: opacity 0.15s ease-out; /* Match animation's opacity timing if possible */
+}
+
+#side-nav-panel #command-output-container p.fading-out {
+  /* opacity: 0; Handled by animation */
+  /* max-height: 0; Handled by animation */
+  /* margin-bottom: 0; Handled by animation */
+  animation: fadeOutAndSlideUp 0.3s ease-out forwards;
+}
+
+#side-nav-panel #command-output-container p.visible {
+  /* opacity: 1; Handled by animation */
+  /* max-height: 5em; Handled by animation */
+  /* transform: translate(0, 0); Handled by animation */
+  animation: slideInDownAndLeft 0.3s ease-out forwards; /* Apply the animation */
+  /* margin-top: 0; Retain if still needed for final layout, though animation should handle position */
+}
+
+/* Ensure ::before is visible when p is visible */
+#side-nav-panel #command-output-container p.visible::before {
+  opacity: 0.6; /* Target opacity for the chevron */
+}
+
+/* Dark theme adjustments for side-nav-panel elements are mostly handled by color inheritance */
+/* Specific adjustments if needed would go in body.dark-theme #side-nav-panel ... */
 
 /* When side nav is open */
 body.side-nav-is-open #side-nav-panel {
@@ -173,8 +292,8 @@ body.side-nav-is-open pre#ascii-header,
 body.side-nav-is-open pre#ascii {
   left: calc( (0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width))) + var(--status-indicator-offset) );
 }
-
 /* Dark theme adjustments */
 body.dark-theme #side-nav-panel {
   background-color: #141414;
 }
+
