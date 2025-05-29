@@ -1,6 +1,6 @@
 :root {
   --side-nav-panel-width: 250px;
-  --left-nav-initial-offset: 20px;
+  --status-indicator-offset: 20px;
   --side-nav-panel-margin: 20px;
 }
 
@@ -24,6 +24,7 @@ body {
   padding-top: 20px;
   box-sizing: border-box;
   overflow-y: auto;
+  overflow-x: hidden;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
@@ -33,6 +34,9 @@ pre#ascii-header {
   text-align: center;
   margin-bottom: 10px;
   white-space: pre;
+  position: relative;
+  left: 0;
+  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 pre#ascii {
@@ -40,12 +44,15 @@ pre#ascii {
   white-space: pre;
   font-size: 8px;
   text-align: center;
+  position: relative;
+  left: 0;
+  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.left-nav {
+.status-indicator {
   position: fixed;
   top: 20px;
-  left: var(--left-nav-initial-offset);
+  left: var(--status-indicator-offset);
   display: flex;
   align-items: center;
   z-index: 1000;
@@ -100,8 +107,8 @@ body.dark-theme .spinner-prompt-text {
 
 #right-theme-prompt {
   position: fixed;
-  top: 42px; /* Vertically center with 40px icon ( (40-fontSize)/2 + top for icon approx ) */
-  right: 85px; /* 30px (right-margin) + 40px (icon-width) + 15px (spacing) */
+  top: 32px;
+  right: 75px;
   font-family: 'FKRasterGrotesk', monospace;
   font-size: 12px;
   color: #0D0D0E;
@@ -158,11 +165,16 @@ body.side-nav-is-open #side-nav-panel {
   left: var(--side-nav-panel-margin);
 }
 
-body.side-nav-is-open .left-nav {
-  left: calc(var(--side-nav-panel-margin) + var(--side-nav-panel-width) + var(--left-nav-initial-offset));
+body.side-nav-is-open .status-indicator {
+  left: calc(var(--side-nav-panel-margin) + var(--side-nav-panel-width) + var(--status-indicator-offset));
+}
+
+body.side-nav-is-open pre#ascii-header,
+body.side-nav-is-open pre#ascii {
+  left: calc( (0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width))) + var(--status-indicator-offset) );
 }
 
 /* Dark theme adjustments */
 body.dark-theme #side-nav-panel {
-  background-color: #121214;
+  background-color: #141414;
 }
