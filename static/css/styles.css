@@ -1,3 +1,9 @@
+:root {
+  --side-nav-panel-width: 250px;
+  --left-nav-initial-offset: 20px;
+  --side-nav-panel-margin: 20px;
+}
+
 @font-face {
   font-family: 'FKRasterGrotesk';
   src: url('../fonts/FKRasterGrotesk-Sharp.otf') format('opentype');
@@ -38,11 +44,12 @@ pre#ascii {
 
 .left-nav {
   position: fixed;
-  top: 30px;
-  left: 30px;
+  top: 20px;
+  left: var(--left-nav-initial-offset);
   display: flex;
   align-items: center;
   z-index: 1000;
+  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .spinner {
@@ -83,8 +90,8 @@ body.dark-theme .spinner-prompt-text {
 
 #theme-icon-container {
   position: fixed;
-  top: 30px;
-  right: 30px;
+  top: 20px;
+  right: 20px;
   width: 40px;
   height: 40px;
   z-index: 1001;
@@ -112,7 +119,7 @@ body.dark-theme #right-theme-prompt {
   left: 0;
   width: 100%;
   height: 100%;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.45s ease-in-out;
 }
 
 #light-theme-icon {
@@ -129,4 +136,33 @@ body.dark-theme #light-theme-icon {
 
 body.dark-theme #dark-theme-icon {
   opacity: 1;
+}
+
+/* Side Navigation Panel Styles */
+#side-nav-panel {
+  position: fixed;
+  top: var(--side-nav-panel-margin);
+  left: calc(-1 * var(--side-nav-panel-width));
+  width: var(--side-nav-panel-width);
+  height: calc(100vh - (2 * var(--side-nav-panel-margin)));
+  background-color: #F1EDE7;
+  padding: 30px;
+  box-sizing: border-box;
+  z-index: 1002;
+  transition: left 0.20s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease-in-out;
+  border-radius: 5px;
+}
+
+/* When side nav is open */
+body.side-nav-is-open #side-nav-panel {
+  left: var(--side-nav-panel-margin);
+}
+
+body.side-nav-is-open .left-nav {
+  left: calc(var(--side-nav-panel-margin) + var(--side-nav-panel-width) + var(--left-nav-initial-offset));
+}
+
+/* Dark theme adjustments */
+body.dark-theme #side-nav-panel {
+  background-color: #121214;
 }
