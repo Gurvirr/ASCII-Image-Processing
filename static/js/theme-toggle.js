@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('keydown', function(event) {
-        if (event.key === 't') {
+        if (event.key.toLowerCase() === 't') {
             if (event.target !== commandInput && 
                 !['INPUT', 'TEXTAREA'].includes(event.target.tagName)) {
                 event.preventDefault();
