@@ -7,7 +7,7 @@ def image_to_ascii():
     ascii_chars = "MNFVI*:."
 
     output = []
-    file = "Great Wave.jpg"
+    file = "great-wave.jpg"
 
     img = Image.open("static/images/" + file)
     img = img.convert("L")
