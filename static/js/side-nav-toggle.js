@@ -19,6 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const commandText = commandInput.value.trim();
 
                 if (commandText !== '') {
+                    // Remove oldest message if there are already 20
+                    const outputs = commandOutputContainer.querySelectorAll('p');
+                    if (outputs.length >= 20) {
+                        const oldest = outputs[outputs.length - 1];
+                        oldest.classList.remove('visible');
+                        oldest.classList.add('fading-out');
+                        setTimeout(() => {
+                            if (oldest.parentNode) {
+                                oldest.remove();
+                            }
+                        }, 700); // match CSS fade duration
+                    }
+
                     const newCommandOutput = document.createElement('p');
                     newCommandOutput.textContent = commandText;
                     
@@ -30,18 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     newCommandOutput.classList.add('visible');
                     
-                    // Timer to initiate fade-out animation and then remove
-                    setTimeout(() => {
-                        newCommandOutput.classList.remove('visible'); // Remove .visible to ensure .fading-out styles take precedence if they conflict
-                        newCommandOutput.classList.add('fading-out');
-                        
-                        // Timer to remove the element from DOM after the fade-out animation (0.3s)
-                        setTimeout(() => {
-                            if (newCommandOutput.parentNode) {
-                                newCommandOutput.remove();
-                            }
-                        }, 300); // This duration MUST match the CSS transition duration for opacity/max-height
-                    }, 8000); // 8 seconds until fade-out begins
+                    // Remove the 8-second lifespan timer and fade-out. Messages now only disappear when the 20-message limit is exceeded.
 
                     commandInput.value = ''; // Clear the input
                 }

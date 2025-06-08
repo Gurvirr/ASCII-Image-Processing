@@ -274,7 +274,7 @@ body.dark-theme #dark-theme-icon {
   /* opacity: 0; Handled by animation */
   /* max-height: 0; Handled by animation */
   /* margin-bottom: 0; Handled by animation */
-  animation: fadeOutAndSlideUp 0.3s ease-out forwards;
+  animation: fadeOutAndSlideUp 0.6s ease-out forwards;
 }
 
 #side-nav-panel #command-output-container p.visible {
