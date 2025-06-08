@@ -95,7 +95,43 @@
   <span class="spinner-prompt-text">Press / for ?</span>
 </div>
 
+    <div id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+      <form id="upload-form" style="background:#fff; padding:2em; border-radius:8px; min-width:300px; max-width:90vw;">
+        <h2>Upload Image for ASCII Art</h2>
+        <label>Image: <input type="file" name="image" accept="image/*" required></label><br><br>
+        <label>Width:
+          <select name="width" id="width-select">
+            <option value="100">100</option>
+            <option value="256" selected>256</option>
+            <option value="512">512</option>
+            <option value="1024">1024</option>
+            <option value="custom">Custom</option>
+          </select>
+          <input type="number" name="custom-width" id="custom-width" min="10" max="2000" style="display:none;" placeholder="Enter width">
+        </label><br><br>
+        <label>Palette:
+          <select name="palette" id="palette-select">
+            <option value="default">Default</option>
+            <option value="shades">Shades</option>
+            <option value="blocks">Blocks</option>
+            <option value="custom">Custom</option>
+          </select>
+          <input type="text" name="custom-palette" id="custom-palette" style="display:none;" placeholder="e.g. @#S%?*+;:,.">
+        </label><br><br>
+        <label>Style:
+          <select name="style">
+            <option value="bw">Black & White</option>
+            <option value="color">Colored</option>
+            <option value="other">Other</option>
+          </select>
+        </label><br><br>
+        <button type="submit">Upload</button>
+        <button type="button" id="cancel-upload">Cancel</button>
+      </form>
+    </div>
+
     <script src="{{ url_for('static', filename='js/spinner.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/commandlistener.js') }}"></script>
     <script src="{{ url_for('static', filename='js/theme-toggle.js') }}"></script>
     <script src="{{ url_for('static', filename='js/side-nav-toggle.js') }}"></script>
   </body>
