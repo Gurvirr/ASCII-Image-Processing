@@ -33,5 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Make toggleTheme globally accessible if it isn't already
+    window.toggleTheme = toggleTheme;
+
     updateRightThemePromptText();
-}); 
+});

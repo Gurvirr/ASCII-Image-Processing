@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const paletteSelect = document.getElementById("palette-select");
   const customPalette = document.getElementById("custom-palette");
 
-  const validCommands = ["?upload --image", "?clear", "?size"]; // Added ?size
+  const validCommands = ["?upload --image", "?clear", "?size", "?theme"]; // Added ?theme
 
   // Show/hide custom width input
   widthSelect.addEventListener("change", () => {
@@ -73,6 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.toggle('terminal-large-font');
             const isLarge = document.body.classList.contains('terminal-large-font');
             addTerminalMessage(`Terminal font size set to ${isLarge ? 'large' : 'default'}.`, 'system-message'); // Added 'system-message' class
+          } else if (commandText === '?theme') {
+            if (typeof toggleTheme === 'function') {
+              toggleTheme();
+              const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+              addTerminalMessage(`Theme switched to ${currentTheme} mode.`, 'system-message');
+            } else {
+              addTerminalMessage("Error: Theme toggle function not found.", 'invalid-command');
+            }
           }
         } else {
           addTerminalMessage(commandText, 'invalid-command');
