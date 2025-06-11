@@ -177,9 +177,13 @@ body.dark-theme #dark-theme-icon {
 
 /* Styles for content within side-nav-panel */
 #side-nav-panel .nav-panel-title {
-  font-size: 14px;
+  font-size: 14px; /* Default size */
   margin-top: 0;
   margin-bottom: 10px;
+}
+
+body.terminal-large-font #side-nav-panel .nav-panel-title {
+  font-size: 16px; /* Large size */
 }
 
 #side-nav-panel .command-input-area {
@@ -189,8 +193,12 @@ body.dark-theme #dark-theme-icon {
 }
 
 #side-nav-panel .command-prompt {
-  font-size: 14px;
+  font-size: 14px; /* Default size */
   margin-right: 8px;
+}
+
+body.terminal-large-font #side-nav-panel .command-prompt {
+  font-size: 16px; /* Large size */
 }
 
 #side-nav-panel #command-input {
@@ -200,9 +208,13 @@ body.dark-theme #dark-theme-icon {
   border-radius: 3px;
   padding: 6px 8px;
   font-family: 'FKRasterGrotesk', monospace;
-  font-size: 12px;
+  font-size: 12px; /* Default size */
   color: inherit;
   outline: none;
+}
+
+body.terminal-large-font #side-nav-panel #command-input {
+  font-size: 14px; /* Large size */
 }
 
 #side-nav-panel #command-input::placeholder {
@@ -250,7 +262,7 @@ body.dark-theme #dark-theme-icon {
 }
 
 #side-nav-panel #command-output-container p {
-  font-size: 12px;
+  font-size: 12px; /* Default size */
   margin-bottom: 5px;
   margin-top: 0;
   opacity: 0; /* Initial state before any animation */
@@ -288,6 +300,34 @@ body.dark-theme #dark-theme-icon {
 /* Ensure ::before is visible when p is visible */
 #side-nav-panel #command-output-container p.visible::before {
   opacity: 0.6; /* Target opacity for the chevron */
+}
+
+/* Chevron color for valid commands */
+#side-nav-panel #command-output-container p.valid-command.visible::before {
+  color: #00D50B;
+  opacity: 1;
+}
+
+/* Chevron color for invalid commands */
+#side-nav-panel #command-output-container p.invalid-command.visible::before {
+  color: #FF0000;
+  opacity: 1;
+}
+
+/* Default chevron color for non-commands (or if no specific class is set) */
+/* This is already handled by the existing p.visible::before rule, 
+   but we can be explicit if needed or adjust its specificity/opacity.
+   For now, the default opacity: 0.6 will make it appear gray-ish.
+*/
+
+/* Styling for system messages (e.g., ?size command confirmation) */
+#side-nav-panel #command-output-container p.system-message.visible::before {
+  content: ""; /* No chevron character */
+}
+
+#side-nav-panel #command-output-container p.system-message.visible {
+  padding-left: 0; /* Text starts from the far left */
+  opacity: 0.4 !important; /* Make text faint, similar to placeholder text */
 }
 
 /* Dark theme adjustments for side-nav-panel elements are mostly handled by color inheritance */

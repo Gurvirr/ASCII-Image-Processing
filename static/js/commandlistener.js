@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const paletteSelect = document.getElementById("palette-select");
   const customPalette = document.getElementById("custom-palette");
 
+  const validCommands = ["?upload --image", "?clear", "?size"]; // Added ?size
+
   // Show/hide custom width input
   widthSelect.addEventListener("change", () => {
     customWidth.style.display = widthSelect.value === "custom" ? "inline-block" : "none";
@@ -26,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const commandText = commandInput.value.trim();
       // Helper to add a message to the terminal
-      function addTerminalMessage(text) {
+      function addTerminalMessage(text, commandType) {
         // Remove oldest message if there are already 20
         const outputs = commandOutputContainer.querySelectorAll('p');
         if (outputs.length >= 20) {
@@ -41,57 +43,45 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const newCommandOutput = document.createElement('p');
         newCommandOutput.textContent = text;
-        commandOutputContainer.prepend(newCommandOutput);
-        void newCommandOutput.offsetWidth;
-        newCommandOutput.classList.add('visible');
-      }
-
-      if (commandText === '?upload --image') {
-        addTerminalMessage(commandText);
-        uploadModal.style.display = 'flex';
-        commandInput.value = '';
-        return;
-      }
-      if (commandText === '?clear') {
-        addTerminalMessage(commandText);
-        // Staggered fade out for all messages from oldest to newest (top to bottom)
-        const outputs = Array.from(commandOutputContainer.querySelectorAll('p'));
-        outputs.reverse(); // So the most recent fades last
-        outputs.forEach((msg, idx) => {
-          setTimeout(() => {
-            msg.classList.remove('visible');
-            msg.classList.add('fading-out');
-          }, idx * 80); // 80ms stagger per message
-        });
-        setTimeout(() => {
-          commandOutputContainer.innerHTML = '';
-        }, 700 + outputs.length * 80); // Wait for last fade to finish
-        commandInput.value = '';
-        return;
-      }
-      if (commandText !== '') {
-        // Remove oldest message if there are already 20
-        const outputs = commandOutputContainer.querySelectorAll('p');
-        if (outputs.length >= 20) {
-          const oldest = outputs[outputs.length - 1];
-          oldest.classList.remove('visible');
-          oldest.classList.add('fading-out');
-          setTimeout(() => {
-            if (oldest.parentNode) {
-              oldest.remove();
-            }
-          }, 700); // match CSS fade duration
+        if (commandType) {
+          newCommandOutput.classList.add(commandType);
         }
-
-        const newCommandOutput = document.createElement('p');
-        newCommandOutput.textContent = commandText;
         commandOutputContainer.prepend(newCommandOutput);
-        // Force a reflow before adding the class to trigger transition
         void newCommandOutput.offsetWidth;
         newCommandOutput.classList.add('visible');
-        // No auto-fade, only removed when limit is exceeded
-        commandInput.value = '';
       }
+
+      if (commandText.startsWith('?')) {
+        if (validCommands.includes(commandText)) { // Check if the command is in the validCommands array
+          addTerminalMessage(commandText, 'valid-command');
+          if (commandText === '?upload --image') {
+            uploadModal.style.display = 'flex';
+          } else if (commandText === '?clear') {
+            // Staggered fade out for all messages from oldest to newest (top to bottom)
+            const outputs = Array.from(commandOutputContainer.querySelectorAll('p'));
+            outputs.reverse(); // So the most recent fades last
+            outputs.forEach((msg, idx) => {
+              setTimeout(() => {
+                msg.classList.remove('visible');
+                msg.classList.add('fading-out');
+              }, idx * 80); // 80ms stagger per message
+            });
+            setTimeout(() => {
+              commandOutputContainer.innerHTML = '';
+            }, 700 + outputs.length * 80); // Wait for last fade to finish
+          } else if (commandText === '?size') {
+            document.body.classList.toggle('terminal-large-font');
+            const isLarge = document.body.classList.contains('terminal-large-font');
+            addTerminalMessage(`Terminal font size set to ${isLarge ? 'large' : 'default'}.`, 'system-message'); // Added 'system-message' class
+          }
+        } else {
+          addTerminalMessage(commandText, 'invalid-command');
+        }
+      } else if (commandText !== '') {
+        // For non-commands, we don't pass a commandType, so it gets default styling
+        addTerminalMessage(commandText);
+      }
+      commandInput.value = ''; // Clear input after processing
     }
   });
 
@@ -113,4 +103,4 @@ document.addEventListener("DOMContentLoaded", () => {
     customPalette.style.display = "none";
     // Optionally, show a loading spinner or message
   });
-}); 
+});
