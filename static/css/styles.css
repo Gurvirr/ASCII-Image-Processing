@@ -167,7 +167,7 @@ body.dark-theme #dark-theme-icon {
   width: var(--side-nav-panel-width);
   height: calc(100vh - (2 * var(--side-nav-panel-margin)));
   background-color: #F1EDE7;
-  padding: 30px 30px 30px 16px;
+  padding: 30px 16px 30px 16px;
   text-align: left;
   box-sizing: border-box;
   z-index: 1002;
@@ -180,6 +180,7 @@ body.dark-theme #dark-theme-icon {
   font-size: 14px; /* Default size */
   margin-top: 0;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 body.terminal-large-font #side-nav-panel .nav-panel-title {
