@@ -347,6 +347,13 @@ body.side-nav-is-open pre#ascii-header,
 body.side-nav-is-open pre#ascii {
   left: calc( 0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width)) );
 }
+
+/* Ensure split header properly centers with ASCII art when side nav is open */
+body.side-nav-is-open #split-ascii-header {
+  left: calc( 0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width)) );
+  position: relative;
+}
+
 /* Dark theme adjustments */
 body.dark-theme #side-nav-panel {
   background-color: #141414;
@@ -475,5 +482,47 @@ body.dark-theme #side-nav-panel {
   }
   body.side-nav-is-open pre#ascii {
     font-size: 5px;
+  }
+}
+
+/* New media query for side-nav open and max-width 1020px */
+@media (max-width: 1020px) {
+  body.side-nav-is-open pre#ascii-header {
+    font-size: 2px;
+  }
+  body.side-nav-is-open #split-ascii-header pre {
+    font-size: 2px;
+  }
+  body.side-nav-is-open pre#ascii {
+    font-size: 4px;
+  }
+}
+
+/* New media query for side-nav open and max-width 870px */
+@media (max-width: 870px) {
+  body.side-nav-is-open pre#ascii-header {
+    font-size: 2px;
+  }
+  body.side-nav-is-open #split-ascii-header pre {
+    font-size: 2px;
+  }
+  body.side-nav-is-open pre#ascii {
+    font-size: 3px;
+  }
+}
+
+/* New media query for side-nav open and max-width 870px */
+@media (max-width: 730px) {
+  body.side-nav-is-open pre#ascii-header {
+    display: block;
+    font-size: 2px;
+    padding-top: 60px;
+  }
+  body.side-nav-is-open #split-ascii-header pre {
+    display: none;
+    font-size: 2px;
+  }
+  body.side-nav-is-open pre#ascii {
+    font-size: 2px;
   }
 }
