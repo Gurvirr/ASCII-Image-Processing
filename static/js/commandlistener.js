@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Upload modal logic
   const commandInput = document.getElementById("command-input");
+  const autocompleteSuggestion = document.getElementById("autocomplete-suggestion");
   const uploadModal = document.getElementById("upload-modal");
   const uploadForm = document.getElementById("upload-form");
   const cancelUpload = document.getElementById("cancel-upload");
@@ -20,11 +21,56 @@ document.addEventListener("DOMContentLoaded", () => {
   paletteSelect.addEventListener("change", () => {
     customPalette.style.display = paletteSelect.value === "custom" ? "inline-block" : "none";
   });
-
   // Command terminal input and output logic
   const commandOutputContainer = document.getElementById('command-output-container');
+  
+  // Autocomplete functionality
+  function updateAutocompleteSuggestion() {
+    const inputValue = commandInput.value.trim();
+    
+    if (inputValue === '') {
+      autocompleteSuggestion.textContent = '';
+      return;
+    }
+    
+    // Find a command that starts with the current input
+    const matchingCommand = validCommands.find(cmd => 
+      cmd.toLowerCase().startsWith(inputValue.toLowerCase())
+    );
+    
+    if (matchingCommand) {
+      // Only show the part of the suggestion that comes after what's already typed
+      const suggestion = matchingCommand.substring(inputValue.length);
+      autocompleteSuggestion.textContent = suggestion;
+      
+      // Position the suggestion to align with the input text
+      autocompleteSuggestion.style.paddingLeft = `${8 + calculateTextWidth(inputValue)}px`;
+    } else {
+      autocompleteSuggestion.textContent = '';
+    }
+  }
+  
+  // Helper to calculate text width (for aligning suggestion with input text)
+  function calculateTextWidth(text) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = window.getComputedStyle(commandInput).font;
+    return context.measureText(text).width;
+  }
+  
+  // Handle input events for autocompletion
+  commandInput.addEventListener('input', updateAutocompleteSuggestion);
+  
+  // Complete the suggestion on Tab key
   commandInput.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Tab' && autocompleteSuggestion.textContent) {
+      event.preventDefault();
+      commandInput.value += autocompleteSuggestion.textContent;
+      autocompleteSuggestion.textContent = '';
+      // Move cursor to end of input
+      commandInput.selectionStart = commandInput.value.length;
+      commandInput.selectionEnd = commandInput.value.length;
+    } else if (event.key === 'Enter') {
       event.preventDefault();
       const commandText = commandInput.value.trim();
       // Helper to add a message to the terminal
@@ -88,8 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (commandText !== '') {
         // For non-commands, we don't pass a commandType, so it gets default styling
         addTerminalMessage(commandText);
-      }
-      commandInput.value = ''; // Clear input after processing
+      }      commandInput.value = ''; // Clear input after processing
+      autocompleteSuggestion.textContent = ''; // Clear suggestion after command
     }
   });
 

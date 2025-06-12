@@ -202,6 +202,44 @@ body.terminal-large-font #side-nav-panel .command-prompt {
   font-size: 16px; /* Large size */
 }
 
+#side-nav-panel .input-wrapper {
+  position: relative;
+  flex-grow: 1;
+}
+
+#side-nav-panel .autocomplete-suggestion {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px 8px;
+  color: inherit;
+  opacity: 0.4;
+  pointer-events: none;
+  font-family: 'FKRasterGrotesk', monospace;
+  font-size: 12px;
+}
+
+body.terminal-large-font #side-nav-panel .autocomplete-suggestion {
+  font-size: 14px;
+}
+
+/* Adjust the #command-input styles for the new structure */
+#side-nav-panel #command-input {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: none;
+  border-radius: 3px;
+  padding: 6px 8px;
+  font-family: 'FKRasterGrotesk', monospace;
+  font-size: 12px;
+  color: inherit;
+  outline: none;
+  z-index: 1; /* Ensure input is above the suggestion */
+  background: transparent;
+}
+
 #side-nav-panel #command-input {
   flex-grow: 1;
   background-color: transparent;
