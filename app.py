@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request
 from PIL import Image, ImageEnhance
+import os, tempfile
 
 app = Flask(__name__)
-UPLOAD_PATH = "uploads/upload_path.png"
+UPLOAD_PATH = os.path.join(tempfile.gettempdir(), "upload_path.png")
 
-def image_to_ascii(file, w1):
+def image_to_ascii(w1):
     ascii_chars = "MNFVI*:."
 
     output = []
 
-    img = Image.open("static/images/" + file)
+    img = Image.open(UPLOAD_PATH)
     img = img.convert("L")
 
     img = ImageEnhance.Contrast(img).enhance(3.0)
