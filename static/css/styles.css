@@ -1,356 +1,362 @@
 :root {
-  --side-nav-panel-width: 250px;
-  --status-indicator-offset: 20px;
-  --side-nav-panel-margin: 20px;
+    --side-nav-panel-width: 250px;
+    --status-indicator-offset: 20px;
+    --side-nav-panel-margin: 20px;
 }
 
 @font-face {
-  font-family: 'FKRasterGrotesk';
-  src: url('../fonts/FKRasterGrotesk-Sharp.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
+    font-family: "FKRasterGrotesk";
+    src: url("../fonts/FKRasterGrotesk-Sharp.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
 }
 
 body {
-  font-family: 'FKRasterGrotesk', monospace;
-  background: #FAF6EF;
-  color: #0D0D0E;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  min-height: 100vh;
-  padding-top: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-family: "FKRasterGrotesk", monospace;
+    background: #faf6ef;
+    color: #0d0d0e;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition:
+        background-color 0.3s ease-in-out,
+        color 0.3s ease-in-out;
 }
 
 pre#ascii-header {
-  font-size: 5px;
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 10px;
-  white-space: pre;
-  position: relative;
-  left: 0;
-  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
-  display: block;
+    font-size: 5px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 10px;
+    white-space: pre;
+    position: relative;
+    left: 0;
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
 }
 
 #split-ascii-header {
-  display: none;
-  text-align: center;
+    display: none;
+    text-align: center;
 }
 
 #split-ascii-header pre {
-  font-weight: 900;
-  white-space: pre;
-  margin-bottom: 0;
-  position: relative;
-  left: 0;
+    font-weight: 900;
+    white-space: pre;
+    margin-bottom: 0;
+    position: relative;
+    left: 0;
 }
 
 pre#ascii {
-  margin: 0;
-  white-space: pre;
-  font-size: 8px;
-  text-align: center;
-  position: relative;
-  left: 0;
-  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+    margin: 0;
+    white-space: pre;
+    font-size: 8px;
+    text-align: center;
+    position: relative;
+    left: 0;
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .status-indicator {
-  position: fixed;
-  top: 20px;
-  left: var(--status-indicator-offset);
-  display: flex;
-  align-items: center;
-  z-index: 1000;
-  transition: left 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+    position: fixed;
+    top: 20px;
+    left: var(--status-indicator-offset);
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  background-color: #0D0D0E;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FAF6EF;
-  font-size: 14px;
-  font-family: 'FKRasterGrotesk', monospace;
-  margin-right: 15px;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #0d0d0e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #faf6ef;
+    font-size: 14px;
+    font-family: "FKRasterGrotesk", monospace;
+    margin-right: 15px;
+    transition:
+        background-color 0.3s ease-in-out,
+        color 0.3s ease-in-out;
 }
 
 .spinner-prompt-text {
-  color: #0D0D0E;
-  font-family: 'FKRasterGrotesk', monospace;
-  font-size: 12px;
-  transition: color 0.3s ease-in-out;
+    color: #0d0d0e;
+    font-family: "FKRasterGrotesk", monospace;
+    font-size: 12px;
+    transition: color 0.3s ease-in-out;
 }
 
 body.dark-theme {
-  background: #0D0D0E;
-  color: #FAF6EF;
+    background: #0d0d0e;
+    color: #faf6ef;
 }
 
 body.dark-theme .spinner {
-  background-color: #FAF6EF;
-  color: #0D0D0E;
+    background-color: #faf6ef;
+    color: #0d0d0e;
 }
 
 body.dark-theme .spinner-prompt-text {
-  color: #FAF6EF;
+    color: #faf6ef;
 }
 
 #theme-icon-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
-  z-index: 1001;
-  cursor: pointer;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    z-index: 1001;
+    cursor: pointer;
 }
 
 #right-theme-prompt {
-  position: fixed;
-  top: 32px;
-  right: 75px;
-  font-family: 'FKRasterGrotesk', monospace;
-  font-size: 12px;
-  color: #0D0D0E;
-  transition: color 0.3s ease-in-out;
-  z-index: 1001;
+    position: fixed;
+    top: 32px;
+    right: 75px;
+    font-family: "FKRasterGrotesk", monospace;
+    font-size: 12px;
+    color: #0d0d0e;
+    transition: color 0.3s ease-in-out;
+    z-index: 1001;
 }
 
 body.dark-theme #right-theme-prompt {
-  color: #FAF6EF;
+    color: #faf6ef;
 }
 
 #theme-icon-container img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: opacity 0.45s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.45s ease-in-out;
 }
 
 #light-theme-icon {
-  opacity: 1;
+    opacity: 1;
 }
 
 #dark-theme-icon {
-  opacity: 0;
+    opacity: 0;
 }
 
 body.dark-theme #light-theme-icon {
-  opacity: 0;
+    opacity: 0;
 }
 
 body.dark-theme #dark-theme-icon {
-  opacity: 1;
+    opacity: 1;
 }
 
 /* Side Navigation Panel Styles */
 #side-nav-panel {
-  position: fixed;
-  top: var(--side-nav-panel-margin);
-  left: calc(-1 * var(--side-nav-panel-width));
-  width: var(--side-nav-panel-width);
-  height: calc(100vh - (2 * var(--side-nav-panel-margin)));
-  background-color: #F1EDE7;
-  padding: 30px 16px 30px 16px;
-  text-align: left;
-  box-sizing: border-box;
-  z-index: 1002;
-  transition: left 0.20s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s ease-in-out;
-  border-radius: 5px;
+    position: fixed;
+    top: var(--side-nav-panel-margin);
+    left: calc(-1 * var(--side-nav-panel-width));
+    width: var(--side-nav-panel-width);
+    height: calc(100vh - (2 * var(--side-nav-panel-margin)));
+    background-color: #f1ede7;
+    padding: 30px 16px 30px 16px;
+    text-align: left;
+    box-sizing: border-box;
+    z-index: 1002;
+    transition:
+        left 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s ease-in-out;
+    border-radius: 5px;
 }
 
 /* Styles for content within side-nav-panel */
 #side-nav-panel .nav-panel-title {
-  font-size: 14px; /* Default size */
-  margin-top: 0;
-  margin-bottom: 10px;
-  text-align: center;
+    font-size: 14px; /* Default size */
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 body.terminal-large-font #side-nav-panel .nav-panel-title {
-  font-size: 16px; /* Large size */
+    font-size: 16px; /* Large size */
 }
 
 #side-nav-panel .command-input-area {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 #side-nav-panel .command-prompt {
-  font-size: 14px; /* Default size */
-  margin-right: 8px;
+    font-size: 14px; /* Default size */
+    margin-right: 8px;
 }
 
 body.terminal-large-font #side-nav-panel .command-prompt {
-  font-size: 16px; /* Large size */
+    font-size: 16px; /* Large size */
 }
 
 #side-nav-panel .input-wrapper {
-  position: relative;
-  flex-grow: 1;
+    position: relative;
+    flex-grow: 1;
 }
 
 #side-nav-panel .autocomplete-suggestion {
-  position: absolute;
-  left: 0;
-  top: 0;
-  padding: 6px 8px;
-  color: inherit;
-  opacity: 0.4;
-  pointer-events: none;
-  font-family: 'FKRasterGrotesk', monospace;
-  font-size: 12px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 6px 8px;
+    color: inherit;
+    opacity: 0.4;
+    pointer-events: none;
+    font-family: "FKRasterGrotesk", monospace;
+    font-size: 12px;
 }
 
 body.terminal-large-font #side-nav-panel .autocomplete-suggestion {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 /* Adjust the #command-input styles for the new structure */
 #side-nav-panel #command-input {
-  position: relative;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: transparent;
-  border: none;
-  border-radius: 3px;
-  padding: 6px 8px;
-  font-family: 'FKRasterGrotesk', monospace;
-  font-size: 12px;
-  color: inherit;
-  outline: none;
-  z-index: 1; /* Ensure input is above the suggestion */
-  background: transparent;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: transparent;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 8px;
+    font-family: "FKRasterGrotesk", monospace;
+    font-size: 12px;
+    color: inherit;
+    outline: none;
+    z-index: 1; /* Ensure input is above the suggestion */
+    background: transparent;
 }
 
 #side-nav-panel #command-input {
-  flex-grow: 1;
-  background-color: transparent;
-  border: none;
-  border-radius: 3px;
-  padding: 6px 8px;
-  font-family: 'FKRasterGrotesk', monospace;
-  font-size: 12px; /* Default size */
-  color: inherit;
-  outline: none;
+    flex-grow: 1;
+    background-color: transparent;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 8px;
+    font-family: "FKRasterGrotesk", monospace;
+    font-size: 12px; /* Default size */
+    color: inherit;
+    outline: none;
 }
 
 body.terminal-large-font #side-nav-panel #command-input {
-  font-size: 14px; /* Large size */
+    font-size: 14px; /* Large size */
 }
 
 #side-nav-panel #command-input::placeholder {
-  color: inherit;
-  opacity: 0.4;
+    color: inherit;
+    opacity: 0.4;
 }
 
 #side-nav-panel #command-output-container {
-  min-height: 50px;
-  position: relative;
-  overflow: hidden;
+    min-height: 50px;
+    position: relative;
+    overflow: hidden;
 }
 
 @keyframes slideInDownAndLeft {
-  0% {
-    transform: translate(15px, -15px);
-    opacity: 0;
-    max-height: 0;
-  }
-  50% {
-    transform: translate(15px, 0); /* Moved down, still to the right */
-    opacity: 1;
-    max-height: 5em; /* Expand height during first part of animation */
-  }
-  100% {
-    transform: translate(0, 0); /* Moved left into final position */
-    opacity: 1;
-    max-height: 5em;
-  }
+    0% {
+        transform: translate(15px, -15px);
+        opacity: 0;
+        max-height: 0;
+    }
+    50% {
+        transform: translate(15px, 0); /* Moved down, still to the right */
+        opacity: 1;
+        max-height: 5em; /* Expand height during first part of animation */
+    }
+    100% {
+        transform: translate(0, 0); /* Moved left into final position */
+        opacity: 1;
+        max-height: 5em;
+    }
 }
 
 @keyframes fadeOutAndSlideUp {
-  0% {
-    opacity: 1;
-    max-height: 5em; /* Start from its visible height */
-    transform: translateY(0);
-    margin-bottom: 5px; /* Keep original margin at start */
-  }
-  100% {
-    opacity: 0;
-    max-height: 0;
-    transform: translateY(-15px); /* Slide up */
-    margin-bottom: 0; /* Collapse margin */
-  }
+    0% {
+        opacity: 1;
+        max-height: 5em; /* Start from its visible height */
+        transform: translateY(0);
+        margin-bottom: 5px; /* Keep original margin at start */
+    }
+    100% {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-15px); /* Slide up */
+        margin-bottom: 0; /* Collapse margin */
+    }
 }
 
 #side-nav-panel #command-output-container p {
-  font-size: 12px; /* Default size */
-  margin-bottom: 5px;
-  margin-top: 0;
-  opacity: 0; /* Initial state before any animation */
-  max-height: 0; /* Initial state before any animation */
-  overflow: hidden;
-  position: relative;
-  padding-left: 1.2em;
-  /* transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin-bottom 0.3s ease-out; Removed */
+    font-size: 12px; /* Default size */
+    margin-bottom: 5px;
+    margin-top: 0;
+    opacity: 0; /* Initial state before any animation */
+    max-height: 0; /* Initial state before any animation */
+    overflow: hidden;
+    position: relative;
+    padding-left: 1.2em;
+    /* transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin-bottom 0.3s ease-out; Removed */
 }
 
 #side-nav-panel #command-output-container p::before {
-  content: "» ";
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0; /* Initial opacity, to fade in with parent */
-  transition: opacity 0.15s ease-out; /* Match animation's opacity timing if possible */
+    content: "» ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0; /* Initial opacity, to fade in with parent */
+    transition: opacity 0.15s ease-out; /* Match animation's opacity timing if possible */
 }
 
 #side-nav-panel #command-output-container p.fading-out {
-  /* opacity: 0; Handled by animation */
-  /* max-height: 0; Handled by animation */
-  /* margin-bottom: 0; Handled by animation */
-  animation: fadeOutAndSlideUp 0.6s ease-out forwards;
+    /* opacity: 0; Handled by animation */
+    /* max-height: 0; Handled by animation */
+    /* margin-bottom: 0; Handled by animation */
+    animation: fadeOutAndSlideUp 0.6s ease-out forwards;
 }
 
 #side-nav-panel #command-output-container p.visible {
-  /* opacity: 1; Handled by animation */
-  /* max-height: 5em; Handled by animation */
-  /* transform: translate(0, 0); Handled by animation */
-  animation: slideInDownAndLeft 0.3s ease-out forwards; /* Apply the animation */
-  /* margin-top: 0; Retain if still needed for final layout, though animation should handle position */
+    /* opacity: 1; Handled by animation */
+    /* max-height: 5em; Handled by animation */
+    /* transform: translate(0, 0); Handled by animation */
+    animation: slideInDownAndLeft 0.3s ease-out forwards; /* Apply the animation */
+    /* margin-top: 0; Retain if still needed for final layout, though animation should handle position */
 }
 
 /* Ensure ::before is visible when p is visible */
 #side-nav-panel #command-output-container p.visible::before {
-  opacity: 0.6; /* Target opacity for the chevron */
+    opacity: 0.6; /* Target opacity for the chevron */
 }
 
 /* Chevron color for valid commands */
 #side-nav-panel #command-output-container p.valid-command.visible::before {
-  color: #00D50B;
-  opacity: 1;
+    color: #00d50b;
+    opacity: 1;
 }
 
 /* Chevron color for invalid commands */
 #side-nav-panel #command-output-container p.invalid-command.visible::before {
-  color: #FF0000;
-  opacity: 1;
+    color: #ff0000;
+    opacity: 1;
 }
 
 /* Default chevron color for non-commands (or if no specific class is set) */
@@ -361,12 +367,12 @@ body.terminal-large-font #side-nav-panel #command-input {
 
 /* Styling for system messages (e.g., ?size command confirmation) */
 #side-nav-panel #command-output-container p.system-message.visible::before {
-  content: ""; /* No chevron character */
+    content: ""; /* No chevron character */
 }
 
 #side-nav-panel #command-output-container p.system-message.visible {
-  padding-left: 0; /* Text starts from the far left */
-  opacity: 0.4 !important; /* Make text faint, similar to placeholder text */
+    padding-left: 0; /* Text starts from the far left */
+    opacity: 0.4 !important; /* Make text faint, similar to placeholder text */
 }
 
 /* Dark theme adjustments for side-nav-panel elements are mostly handled by color inheritance */
@@ -374,193 +380,201 @@ body.terminal-large-font #side-nav-panel #command-input {
 
 /* When side nav is open */
 body.side-nav-is-open #side-nav-panel {
-  left: var(--side-nav-panel-margin);
+    left: var(--side-nav-panel-margin);
 }
 
 body.side-nav-is-open .status-indicator {
-  left: calc(var(--side-nav-panel-margin) + var(--side-nav-panel-width) + var(--status-indicator-offset));
+    left: calc(
+        var(--side-nav-panel-margin) + var(--side-nav-panel-width) +
+            var(--status-indicator-offset)
+    );
 }
 
 body.side-nav-is-open pre#ascii-header,
 body.side-nav-is-open pre#ascii {
-  left: calc( 0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width)) );
+    left: calc(
+        0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width))
+    );
 }
 
 /* Ensure split header properly centers with ASCII art when side nav is open */
 body.side-nav-is-open #split-ascii-header {
-  left: calc( 0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width)) );
-  position: relative;
+    left: calc(
+        0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width))
+    );
+    position: relative;
 }
 
 /* Dark theme adjustments */
 body.dark-theme #side-nav-panel {
-  background-color: #141414;
+    background-color: #141414;
 }
 
 @media (max-width: 1185px) {
-  pre#ascii-header {
-    font-size: 4.5px;
-  }
-  pre#ascii {
-    font-size: 7px;
-  }
+    pre#ascii-header {
+        font-size: 4.5px;
+    }
+    pre#ascii {
+        font-size: 7px;
+    }
 }
 
 @media (max-width: 1045px) {
-  pre#ascii-header {
-    font-size: 4px;
-  }
-  pre#ascii {
-    font-size: 6px;
-  }
+    pre#ascii-header {
+        font-size: 4px;
+    }
+    pre#ascii {
+        font-size: 6px;
+    }
 }
 
 @media (max-width: 905px) {
-  pre#ascii-header {
-    display: none;
-  }
-  #split-ascii-header {
-    display: block;
-  }
-  #split-ascii-header pre {
-    font-size: 4px;
-  }
-  pre#ascii {
-    font-size: 5px;
-  }
+    pre#ascii-header {
+        display: none;
+    }
+    #split-ascii-header {
+        display: block;
+    }
+    #split-ascii-header pre {
+        font-size: 4px;
+    }
+    pre#ascii {
+        font-size: 5px;
+    }
 }
 
 @media (max-width: 755px) {
-  #split-ascii-header pre {
-    font-size: 3.5px;
-  }
-  pre#ascii {
-    font-size: 4.5px;
-  }
+    #split-ascii-header pre {
+        font-size: 3.5px;
+    }
+    pre#ascii {
+        font-size: 4.5px;
+    }
 }
 
 @media (max-width: 685px) {
-  #split-ascii-header pre {
-    font-size: 3px;
-  }
-  pre#ascii {
-    font-size: 4px;
-  }
+    #split-ascii-header pre {
+        font-size: 3px;
+    }
+    pre#ascii {
+        font-size: 4px;
+    }
 }
 
 @media (max-width: 615px) {
-  pre#ascii-header {
-    display: block;
-    font-size: 3px;
-    padding-top: 60px;
-  }
-  #split-ascii-header {
-    display: none;
-  }
-  pre#ascii {
-    font-size: 3.5px;
-  }
+    pre#ascii-header {
+        display: block;
+        font-size: 3px;
+        padding-top: 60px;
+    }
+    #split-ascii-header {
+        display: none;
+    }
+    pre#ascii {
+        font-size: 3.5px;
+    }
 }
 
 @media (max-width: 535px) {
-  pre#ascii-header {
-    font-size: 3px;
-  }
-  pre#ascii {
-    font-size: 3px;
-  }
+    pre#ascii-header {
+        font-size: 3px;
+    }
+    pre#ascii {
+        font-size: 3px;
+    }
 }
 
 @media (max-width: 460px) {
-  pre#ascii-header {
-    font-size: 2px;
-  }
-  pre#ascii {
-    font-size: 2.5px;
-  }
+    pre#ascii-header {
+        font-size: 2px;
+    }
+    pre#ascii {
+        font-size: 2.5px;
+    }
 }
 
 @media (max-width: 385px) {
-  pre#ascii-header {
-    font-size: 2px;
-    font-weight: bold;
-  }
-  pre#ascii {
-    font-size: 2px;
-    font-weight: bold;
-  }
-  .spinner-prompt-text {
-    font-size: 10px;
-  }
-  #right-theme-prompt {
-    font-size: 10px;
-  }
+    pre#ascii-header {
+        font-size: 2px;
+        font-weight: bold;
+    }
+    pre#ascii {
+        font-size: 2px;
+        font-weight: bold;
+    }
+    .spinner-prompt-text {
+        font-size: 10px;
+    }
+    #right-theme-prompt {
+        font-size: 10px;
+    }
 }
 
 /* New media query for side-nav open and max-width 1440px */
 @media (max-width: 1440px) {
-  body.side-nav-is-open pre#ascii-header {
-    font-size: 4px;
-  }
-  body.side-nav-is-open #split-ascii-header pre { /* Handles the split header case */
-    font-size: 4px;
-  }
-  body.side-nav-is-open pre#ascii {
-    font-size: 6px;
-  }
+    body.side-nav-is-open pre#ascii-header {
+        font-size: 4px;
+    }
+    body.side-nav-is-open #split-ascii-header pre {
+        /* Handles the split header case */
+        font-size: 4px;
+    }
+    body.side-nav-is-open pre#ascii {
+        font-size: 6px;
+    }
 }
 
 /* New media query for side-nav open and max-width 1160px */
 @media (max-width: 1160px) {
-  body.side-nav-is-open pre#ascii-header {
-    font-size: 3px;
-  }
-  body.side-nav-is-open #split-ascii-header pre {
-    font-size: 3px;
-  }
-  body.side-nav-is-open pre#ascii {
-    font-size: 5px;
-  }
+    body.side-nav-is-open pre#ascii-header {
+        font-size: 3px;
+    }
+    body.side-nav-is-open #split-ascii-header pre {
+        font-size: 3px;
+    }
+    body.side-nav-is-open pre#ascii {
+        font-size: 5px;
+    }
 }
 
 /* New media query for side-nav open and max-width 1020px */
 @media (max-width: 1020px) {
-  body.side-nav-is-open pre#ascii-header {
-    font-size: 2px;
-  }
-  body.side-nav-is-open #split-ascii-header pre {
-    font-size: 2px;
-  }
-  body.side-nav-is-open pre#ascii {
-    font-size: 4px;
-  }
+    body.side-nav-is-open pre#ascii-header {
+        font-size: 2px;
+    }
+    body.side-nav-is-open #split-ascii-header pre {
+        font-size: 2px;
+    }
+    body.side-nav-is-open pre#ascii {
+        font-size: 4px;
+    }
 }
 
 /* New media query for side-nav open and max-width 870px */
 @media (max-width: 870px) {
-  body.side-nav-is-open pre#ascii-header {
-    font-size: 2px;
-  }
-  body.side-nav-is-open #split-ascii-header pre {
-    font-size: 2px;
-  }
-  body.side-nav-is-open pre#ascii {
-    font-size: 3px;
-  }
+    body.side-nav-is-open pre#ascii-header {
+        font-size: 2px;
+    }
+    body.side-nav-is-open #split-ascii-header pre {
+        font-size: 2px;
+    }
+    body.side-nav-is-open pre#ascii {
+        font-size: 3px;
+    }
 }
 
 /* New media query for side-nav open and max-width 870px */
 @media (max-width: 730px) {
-  body.side-nav-is-open pre#ascii-header {
-    display: block;
-    font-size: 2px;
-    padding-top: 60px;
-  }
-  body.side-nav-is-open #split-ascii-header pre {
-    display: none;
-    font-size: 2px;
-  }
-  body.side-nav-is-open pre#ascii {
-    font-size: 2px;
-  }
+    body.side-nav-is-open pre#ascii-header {
+        display: block;
+        font-size: 2px;
+        padding-top: 60px;
+    }
+    body.side-nav-is-open #split-ascii-header pre {
+        display: none;
+        font-size: 2px;
+    }
+    body.side-nav-is-open pre#ascii {
+        font-size: 2px;
+    }
 }

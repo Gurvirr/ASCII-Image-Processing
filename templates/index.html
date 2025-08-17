@@ -1,31 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Image Processing</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-  </head>
-  <body>
-    <div id="side-nav-panel">
-        <p class="nav-panel-title">ASCII Command Terminal</p>        <div class="command-input-area">
-            <span class="command-prompt">:/</span>
-            <div class="input-wrapper">
-                <input type="text" id="command-input" placeholder="Enter Command">
-                <span id="autocomplete-suggestion" class="autocomplete-suggestion"></span>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ASCII Image Processing</title>
+        <link
+            rel="icon"
+            href="{{ url_for('static', filename='favicon.ico') }}"
+            type="image/x-icon"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/styles.css') }}"
+        />
+    </head>
+    <body>
+        <div id="side-nav-panel">
+            <p class="nav-panel-title">ASCII Command Terminal</p>
+            <div class="command-input-area">
+                <span class="command-prompt">:/</span>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="command-input"
+                        placeholder="Enter Command"
+                    />
+                    <span
+                        id="autocomplete-suggestion"
+                        class="autocomplete-suggestion"
+                    ></span>
+                </div>
+            </div>
+            <div id="command-output-container">
+                <!-- Command outputs will appear here -->
             </div>
         </div>
-        <div id="command-output-container">
-            <!-- Command outputs will appear here -->
+        <span id="right-theme-prompt">Press T for dark</span>
+        <div id="theme-icon-container">
+            <img
+                id="light-theme-icon"
+                src="{{ url_for('static', filename='images/light-mode.png') }}"
+                alt="Light theme icon"
+            />
+            <img
+                id="dark-theme-icon"
+                src="{{ url_for('static', filename='images/dark-mode.png') }}"
+                alt="Dark theme icon"
+            />
         </div>
-    </div>
-    <span id="right-theme-prompt">Press T for dark</span>
-    <div id="theme-icon-container">
-        <img id="light-theme-icon" src="{{ url_for('static', filename='images/light-mode.png') }}" alt="Light theme icon">
-        <img id="dark-theme-icon" src="{{ url_for('static', filename='images/dark-mode.png') }}" alt="Dark theme icon">
-    </div>
-    <pre id="ascii-header">
+        <pre id="ascii-header">
        ##             #######          # ###           #####  #   #####  #            #####  #                                                   ##### ##                                                                                            
      /####           /       ###      /  /###  /     ######  /  ######  /           ######  /                                                  ######  /###                                                                #                          
     /  ###          /         ##     /  /  ###/     /#   /  /  /#   /  /           /#   /  /                                                  /#   /  /  ###                                                              ###                         
@@ -45,9 +68,10 @@
  ##               \)                                                                                                 ####   ###            ###    /                                                                                         ####   ###
                                                                                                                    /######  /#              #####/                                                                                        /######  /# 
                                                                                                                   /     ###/                  ###                                                                                        /     ###/   
-    </pre>
-    <div id="split-ascii-header">
-      <pre id="ascii-header-part1">
+    </pre
+        >
+        <div id="split-ascii-header">
+            <pre id="ascii-header-part1">
        ##             #######          # ###           #####  #   #####  #
     /####           /       ###      /  /###  /     ######  /  ######  /  
    /  ###          /         ##     /  /  ###/     /#   /  /  /#   /  /   
@@ -65,8 +89,9 @@
 /     ##      #/ /     #####            ###         ###        ###         
 #                |                                                         
  ##               \\)                                                       
-      </pre>
-      <pre id="ascii-header-part2">
+      </pre
+            >
+            <pre id="ascii-header-part2">
        #####  #                                                   ##### ##                                                                                            
     ######  /                                                  ######  /###                                                                #                          
    /#   /  /                                                  /#   /  /  ###                                                              ###                         
@@ -86,55 +111,21 @@
                                      ####   ###            ###    /                                                                                         ####   ###
                                    /######  /#              #####/                                                                                        /######  /# 
                                   /     ###/                  ###                                                                                        /     ###/   
-      </pre>
-    </div>
-    <pre id="ascii">{% include 'ascii_home.txt' %}</pre>
-    
-<div class="status-indicator">
-  <div class="spinner">
-    <span id="spinner-char">—</span>
-  </div>
-  <span class="spinner-prompt-text">Press / for ?</span>
-</div>
+      </pre
+            >
+        </div>
+        <pre id="ascii">{% include 'ascii_home.txt' %}</pre>
 
-    <div id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
-      <form id="upload-form" style="background:#fff; padding:2em; border-radius:8px; min-width:300px; max-width:90vw;">
-        <h2>Upload Image for ASCII Art</h2>
-        <label>Image: <input type="file" name="image" accept="image/*" required></label><br><br>
-        <label>Width:
-          <select name="width" id="width-select">
-            <option value="100">100</option>
-            <option value="256" selected>256</option>
-            <option value="512">512</option>
-            <option value="1024">1024</option>
-            <option value="custom">Custom</option>
-          </select>
-          <input type="number" name="custom-width" id="custom-width" min="10" max="2000" style="display:none;" placeholder="Enter width">
-        </label><br><br>
-        <label>Palette:
-          <select name="palette" id="palette-select">
-            <option value="default">Default</option>
-            <option value="shades">Shades</option>
-            <option value="blocks">Blocks</option>
-            <option value="custom">Custom</option>
-          </select>
-          <input type="text" name="custom-palette" id="custom-palette" style="display:none;" placeholder="e.g. @#S%?*+;:,.">
-        </label><br><br>
-        <label>Style:
-          <select name="style">
-            <option value="bw">Black & White</option>
-            <option value="color">Colored</option>
-            <option value="other">Other</option>
-          </select>
-        </label><br><br>
-        <button type="submit">Upload</button>
-        <button type="button" id="cancel-upload">Cancel</button>
-      </form>
-    </div>
+        <div class="status-indicator">
+            <div class="spinner">
+                <span id="spinner-char">—</span>
+            </div>
+            <span class="spinner-prompt-text">Press / for ?</span>
+        </div>
 
-    <script src="{{ url_for('static', filename='js/spinner.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/commandlistener.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/theme-toggle.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/side-nav-toggle.js') }}"></script>
-  </body>
+        <script src="{{ url_for('static', filename='js/spinner.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/commandlistener.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/theme-toggle.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/side-nav-toggle.js') }}"></script>
+    </body>
 </html>
