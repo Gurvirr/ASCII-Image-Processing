@@ -13,11 +13,67 @@ document.addEventListener("DOMContentLoaded", () => {
     "?ascii",
   ];
 
+  // Initialize file input element
+  const fileInput = document.createElement("input");
+  fileInput.type = "file"; // Set type to file
+  fileInput.accept = "image/*"; // Only accept image files
+  fileInput.style.display = "none"; // Hide it
+  document.body.appendChild(fileInput); // Add/append to webpage
+
+  fileInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      addTerminalMessage(`Selected file: "${file.name}".`, "system-message");
+    }
+  });
+
   // Command terminal input and output logic
   const commandOutputContainer = document.getElementById(
     "command-output-container",
   );
 
+  let currentMessageCount = commandOutputContainer.querySelectorAll("p").length;
+
+  // Helper to add a message to the terminal
+  function addTerminalMessage(text, commandType) {
+    // Check if we need to remove any messages to maintain the 20 message limit
+    const maxMessages = 20;
+    const outputs =
+      commandOutputContainer.querySelectorAll("p:not(.fading-out)");
+
+    // If we're at or will exceed the limit with this new message
+    if (outputs.length >= maxMessages) {
+      // Find the oldest message (last in the DOM since we prepend)
+      const oldest = outputs[outputs.length - 1];
+
+      // Mark it for removal
+      oldest.classList.remove("visible");
+      oldest.classList.add("fading-out");
+
+      // Actually remove it from DOM after animation completes
+      setTimeout(() => {
+        if (oldest.parentNode) {
+          oldest.remove();
+        }
+      }, 700); // match CSS fade duration
+    }
+
+    // Create and add the new message
+    const newCommandOutput = document.createElement("p");
+    newCommandOutput.textContent = text;
+    if (commandType) {
+      newCommandOutput.classList.add(commandType);
+    }
+
+    // Add the new message to the container
+    commandOutputContainer.prepend(newCommandOutput);
+
+    // Trigger reflow for animation
+    void newCommandOutput.offsetWidth;
+    newCommandOutput.classList.add("visible");
+  }
+
+  // Initialize file input element
   // Autocomplete functionality
   function updateAutocompleteSuggestion() {
     const inputValue = commandInput.value.trim();
@@ -66,55 +122,13 @@ document.addEventListener("DOMContentLoaded", () => {
       commandInput.selectionEnd = commandInput.value.length;
     } else if (event.key === "Enter") {
       event.preventDefault();
-      const commandText = commandInput.value.trim(); // Track the current number of messages (including those being removed)
-      let currentMessageCount =
-        commandOutputContainer.querySelectorAll("p").length;
-
-      // Helper to add a message to the terminal
-      function addTerminalMessage(text, commandType) {
-        // Check if we need to remove any messages to maintain the 20 message limit
-        const maxMessages = 20;
-        const outputs =
-          commandOutputContainer.querySelectorAll("p:not(.fading-out)");
-
-        // If we're at or will exceed the limit with this new message
-        if (outputs.length >= maxMessages) {
-          // Find the oldest message (last in the DOM since we prepend)
-          const oldest = outputs[outputs.length - 1];
-
-          // Mark it for removal
-          oldest.classList.remove("visible");
-          oldest.classList.add("fading-out");
-
-          // Actually remove it from DOM after animation completes
-          setTimeout(() => {
-            if (oldest.parentNode) {
-              oldest.remove();
-              currentMessageCount--; // Decrement our count when actually removed
-            }
-          }, 700); // match CSS fade duration
-        }
-
-        // Create and add the new message
-        const newCommandOutput = document.createElement("p");
-        newCommandOutput.textContent = text;
-        if (commandType) {
-          newCommandOutput.classList.add(commandType);
-        }
-
-        // Add the new message to the container
-        commandOutputContainer.prepend(newCommandOutput);
-        currentMessageCount++; // Increment our message count
-
-        // Trigger reflow for animation
-        void newCommandOutput.offsetWidth;
-        newCommandOutput.classList.add("visible");
-      }
+      const commandText = commandInput.value.trim();
 
       if (commandText.startsWith("?")) {
         if (validCommands.includes(commandText)) {
           // Check if the command is in the validCommands array
           addTerminalMessage(commandText, "valid-command");
+
           if (commandText === "?clear") {
             // Staggered fade out for all messages from oldest to newest (top to bottom)
             const outputs = Array.from(
@@ -160,6 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "invalid-command",
               );
             }
+          } else if (commandText === "?upload") {
+            fileInput.click();
           }
         } else {
           addTerminalMessage(commandText, "invalid-command");

@@ -3,11 +3,10 @@ from PIL import Image, ImageEnhance
 
 app = Flask(__name__)
 
-def image_to_ascii():
+def image_to_ascii(file, w1):
     ascii_chars = "MNFVI*:."
 
     output = []
-    file = "great-wave.jpg"
 
     img = Image.open("static/images/" + file)
     img = img.convert("L")
@@ -17,7 +16,6 @@ def image_to_ascii():
     w0, h0 = img.width, img.height
     aspect = h0 / w0
 
-    w1 = 256
     h1 = int(aspect*w1*0.5)
 
     img = img.resize((w1, h1))
@@ -37,8 +35,7 @@ def image_to_ascii():
 
 @app.route("/")
 def home():
-    ascii_home = image_to_ascii()
-    return render_template("index.html", ascii_home=ascii_home)
+    return render_template("index.html")
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
