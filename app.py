@@ -1,7 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from PIL import Image, ImageEnhance
 
 app = Flask(__name__)
+UPLOAD_PATH = "uploads/upload_path.png"
 
 def image_to_ascii(file, w1):
     ascii_chars = "MNFVI*:."
@@ -36,6 +37,13 @@ def image_to_ascii(file, w1):
 @app.route("/")
 def home():
     return render_template("index.html")
+    
+@app.route("/upload", methods=["POST"])
+def upload():
+    file = request.files["file"]
+    file.save(UPLOAD_PATH)
+    
+    return f'File "{file.filename}" uploaded successfully.', 200  # return string + status code
 
 if __name__ == "__main__":
     app.run(debug=True)

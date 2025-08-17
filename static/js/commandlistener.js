@@ -24,6 +24,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const file = event.target.files[0];
     if (file) {
       addTerminalMessage(`Selected file: "${file.name}".`, "system-message");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      fetch("/upload", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.text()) // read server response
+        .then((msg) => {
+          addTerminalMessage(
+            msg + " Type ?ascii to convert it.",
+            "system-message",
+          );
+          fileInput.value = ""; // clear input so same file can be re-uploaded
+        })
+        .catch((error) => {
+          addTerminalMessage(`Upload failed: ${error}`, "error-message");
+          fileInput.value = ""; // clear input even on error
+        });
     }
   });
 
