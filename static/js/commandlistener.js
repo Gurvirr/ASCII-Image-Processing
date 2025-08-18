@@ -13,6 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
     "?ascii",
   ];
 
+  const commandDescriptions = {
+    "?ascii": "Convert image to ASCII",
+    "?upload": "Upload image",
+    "?theme": "Toggle light/dark theme",
+    "?size": "Toggle terminal font size",
+    "?clear": "Clear terminal",
+    "?help": "List all valid commands",
+  };
+
   // Initialize file input element
   const fileInput = document.createElement("input");
   fileInput.type = "file"; // Set type to file
@@ -152,7 +161,18 @@ document.addEventListener("DOMContentLoaded", () => {
           // Check if the command is in the validCommands array
           addTerminalMessage(commandText, "valid-command");
 
-          if (commandText === "?clear") {
+          // ?help command
+          if (commandText === "?help") {
+            Object.entries(commandDescriptions).forEach(([cmd, desc]) => {
+              addTerminalMessage(
+                `${cmd} \u00A0—\u00A0 ${desc}`,
+                "system-message",
+              );
+            });
+          }
+
+          // ?clear command
+          else if (commandText === "?clear") {
             // Staggered fade out for all messages from oldest to newest (top to bottom)
             const outputs = Array.from(
               commandOutputContainer.querySelectorAll("p"),
@@ -170,7 +190,10 @@ document.addEventListener("DOMContentLoaded", () => {
               },
               700 + outputs.length * 80,
             ); // Wait for last fade to finish
-          } else if (commandText === "?size") {
+          }
+
+          // ?size command
+          else if (commandText === "?size") {
             document.body.classList.toggle("terminal-large-font");
             const isLarge = document.body.classList.contains(
               "terminal-large-font",
@@ -178,8 +201,11 @@ document.addEventListener("DOMContentLoaded", () => {
             addTerminalMessage(
               `Terminal font size set to ${isLarge ? "large" : "default"}.`,
               "system-message",
-            ); // Added 'system-message' class
-          } else if (commandText === "?theme") {
+            );
+          }
+
+          // ?theme command
+          else if (commandText === "?theme") {
             if (typeof toggleTheme === "function") {
               toggleTheme();
               const currentTheme = document.body.classList.contains(
@@ -197,9 +223,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 "invalid-command",
               );
             }
-          } else if (commandText === "?upload") {
+          }
+
+          // ?upload command
+          else if (commandText === "?upload") {
             fileInput.click();
-          } else if (commandText == "?ascii") {
+          }
+
+          // ?ascii command
+          else if (commandText == "?ascii") {
             fetch("/ascii", {
               method: "GET",
             })
@@ -218,7 +250,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 addTerminalMessage(`Error: ${error.message}`, "error-message");
               });
           }
-        } else {
+        }
+
+        // check for invalid commands
+        else {
           addTerminalMessage(commandText, "invalid-command");
         }
       } else if (commandText !== "") {
