@@ -1,4 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
+  function setAsciiFontSize(width) {
+    const baseWidth = 256; // width at which font is 8px
+    const baseFontSize = 8; // starting font size in px
+    const minFontSize = 1; // smallest font size allowed
+
+    // Scale font inversely proportional to width
+    const fontSize = Math.max(
+      minFontSize,
+      Math.round(baseFontSize * (baseWidth / width)),
+    );
+
+    document.getElementById("ascii").style.fontSize = fontSize + "px";
+  }
+
   const commandInput = document.getElementById("command-input");
   const autocompleteSuggestion = document.getElementById(
     "autocomplete-suggestion",
@@ -256,6 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
                   `Converted "${uploadedFileName}" to ASCII.`,
                   "system-message",
                 );
+
+                // Adjust font size dynamically based on width
+                setAsciiFontSize(width);
+
                 document.getElementById("ascii").textContent = asciiArt;
               })
               .catch((error) => {
