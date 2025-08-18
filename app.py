@@ -5,12 +5,12 @@ import os, tempfile
 app = Flask(__name__)
 UPLOAD_PATH = os.path.join(tempfile.gettempdir(), "upload_path.png")
 
-def image_to_ascii(w1):
+def image_to_ascii(file_path, width):
     ascii_chars = "MNFVI*:."
 
     output = []
 
-    img = Image.open(UPLOAD_PATH)
+    img = Image.open(file_path)
     img = img.convert("L")
 
     img = ImageEnhance.Contrast(img).enhance(3.0)
@@ -18,16 +18,16 @@ def image_to_ascii(w1):
     w0, h0 = img.width, img.height
     aspect = h0 / w0
 
-    h1 = int(aspect*w1*0.5)
+    height = int(aspect*width*0.5)
 
-    img = img.resize((w1, h1))
+    img = img.resize((width, height))
 
     data = img.getdata()
 
-    for row in range(h1):
+    for row in range(height):
         row_str = ""
-        for col in range(w1):
-            pixel = (row * w1) + col
+        for col in range(width):
+            pixel = (row * width) + col
             luminance = data[pixel]
             index = int(luminance/255 * (len(ascii_chars) - 1))
             row_str += ascii_chars[index]
@@ -44,7 +44,15 @@ def upload():
     file = request.files["file"]
     file.save(UPLOAD_PATH)
     
-    return f'File "{file.filename}" uploaded successfully.', 200  # return string + status code
+    return 'Uploaded successfully ✓', 200  # return string + status code
+
+@app.route("/ascii", methods=["GET"])
+def ascii_convert():
+    if not os.path.exists(UPLOAD_PATH):
+        return "No file uploaded yet. Please use ?upload first.", 400
+
+    ascii_art = image_to_ascii(UPLOAD_PATH, width=256)
+    return ascii_art, 200
 
 if __name__ == "__main__":
     app.run(debug=True)

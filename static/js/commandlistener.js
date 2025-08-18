@@ -20,10 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
   fileInput.style.display = "none"; // Hide it
   document.body.appendChild(fileInput); // Add/append to webpage
 
+  let uploadedFileName = "";
+
   fileInput.addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (file) {
-      addTerminalMessage(`Selected file: "${file.name}".`, "system-message");
+      uploadedFileName = file.name; // store it
+      addTerminalMessage(
+        `Selected file: "${uploadedFileName}".`,
+        "system-message",
+      );
 
       const formData = new FormData();
       formData.append("file", file);
@@ -34,10 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.text()) // read server response
         .then((msg) => {
-          addTerminalMessage(
-            msg + " Type ?ascii to convert it.",
-            "system-message",
-          );
+          addTerminalMessage(msg, "system-message");
           fileInput.value = ""; // clear input so same file can be re-uploaded
         })
         .catch((error) => {
@@ -196,6 +199,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           } else if (commandText === "?upload") {
             fileInput.click();
+          } else if (commandText == "?ascii") {
+            fetch("/ascii", {
+              method: "GET",
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error("No file uploaded yet.");
+                return response.text();
+              })
+              .then((asciiArt) => {
+                addTerminalMessage(
+                  `Converted "${uploadedFileName}" to ASCII.`,
+                  "system-message",
+                ); // display in terminal
+                document.getElementById("ascii").textContent = asciiArt; // update <pre> dynamically
+              })
+              .catch((error) => {
+                addTerminalMessage(`Error: ${error.message}`, "error-message");
+              });
           }
         } else {
           addTerminalMessage(commandText, "invalid-command");
