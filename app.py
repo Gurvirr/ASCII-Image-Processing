@@ -50,8 +50,9 @@ def upload():
 def ascii_convert():
     if not os.path.exists(UPLOAD_PATH):
         return "No file uploaded yet. Please use ?upload first.", 400
-
-    ascii_art = image_to_ascii(UPLOAD_PATH, width=256)
+    
+    width = request.args.get("width", default=256, type=int)
+    ascii_art = image_to_ascii(UPLOAD_PATH, width=width)
     return ascii_art, 200
 
 if __name__ == "__main__":

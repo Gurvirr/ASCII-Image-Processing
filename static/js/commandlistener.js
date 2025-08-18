@@ -157,7 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const commandText = commandInput.value.trim();
 
       if (commandText.startsWith("?")) {
-        if (validCommands.includes(commandText)) {
+        if (
+          validCommands.includes(commandText) ||
+          commandText.startsWith("?ascii ")
+        ) {
           // Check if the command is in the validCommands array
           addTerminalMessage(commandText, "valid-command");
 
@@ -231,10 +234,19 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           // ?ascii command
-          else if (commandText == "?ascii") {
-            fetch("/ascii", {
-              method: "GET",
-            })
+          else if (commandText.startsWith("?ascii")) {
+            const parts = commandText.split(" ");
+            const width = parts[1] ? parseInt(parts[1], 10) : 256;
+
+            if (isNaN(width) || width <= 0) {
+              addTerminalMessage(
+                "Invalid width. Please enter a positive number, e.g. ?ascii 128",
+                "system-message",
+              );
+              return;
+            }
+
+            fetch(`/ascii?width=${width}`, { method: "GET" })
               .then((response) => {
                 if (!response.ok) throw new Error("No file uploaded yet.");
                 return response.text();
@@ -243,8 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 addTerminalMessage(
                   `Converted "${uploadedFileName}" to ASCII.`,
                   "system-message",
-                ); // display in terminal
-                document.getElementById("ascii").textContent = asciiArt; // update <pre> dynamically
+                );
+                document.getElementById("ascii").textContent = asciiArt;
               })
               .catch((error) => {
                 addTerminalMessage(`Error: ${error.message}`, "error-message");
