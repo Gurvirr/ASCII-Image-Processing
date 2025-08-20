@@ -6,3 +6,5 @@
 - Add support for custom ASCII palette (in a navigatable terminal menu)
 - Add RGB support
 - Add functionality to export ASCII output to .txt or a custom .png
+- Create MIT license
+- Write a comprehensive README.md
