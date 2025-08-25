@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const commandDescriptions = {
+    "?ascii {width}": "Specify width",
     "?ascii": "Convert image to ASCII",
     "?upload": "Upload image",
     "?theme": "Toggle light/dark theme",
