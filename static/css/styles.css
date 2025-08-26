@@ -34,7 +34,6 @@ pre#ascii-header {
     font-size: 5px;
     font-weight: 900;
     text-align: center;
-    margin-bottom: 10px;
     white-space: pre;
     position: relative;
     left: 0;
@@ -63,6 +62,41 @@ pre#ascii {
     position: relative;
     left: 0;
     transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: monospace !important;
+}
+
+/* ASCII Output Container Styles */
+.ascii-output-container {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border: none;
+    background: none;
+    box-sizing: border-box;
+    z-index: 10;
+    border-radius: 8px;
+    overflow: auto;
+    padding: 0;
+    transition:
+        left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        right 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        top 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+pre#ascii-header {
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.side-nav-is-open .ascii-output-container {
+    left: calc(
+        var(--side-nav-panel-width) + var(--side-nav-panel-margin) + 10px
+    );
 }
 
 .status-indicator {
@@ -390,8 +424,7 @@ body.side-nav-is-open .status-indicator {
     );
 }
 
-body.side-nav-is-open pre#ascii-header,
-body.side-nav-is-open pre#ascii {
+body.side-nav-is-open pre#ascii-header {
     left: calc(
         0.5 * (var(--side-nav-panel-margin) + var(--side-nav-panel-width))
     );

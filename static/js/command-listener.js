@@ -1,4 +1,50 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Improved: Use requestAnimationFrame, delayed fallback, and MutationObserver for header changes
+  function positionAsciiOutputContainer() {
+    requestAnimationFrame(() => {
+      let header = document.getElementById("ascii-header");
+      const splitHeader = document.getElementById("split-ascii-header");
+      const container = document.querySelector(".ascii-output-container");
+
+      // If split header is visible, use its bottom instead
+      if (splitHeader && splitHeader.offsetParent !== null) {
+        // Find the last visible pre inside split-ascii-header
+        const preElements = splitHeader.querySelectorAll("pre");
+        let lastVisiblePre = null;
+        preElements.forEach((pre) => {
+          if (pre.offsetParent !== null) lastVisiblePre = pre;
+        });
+        if (lastVisiblePre) header = lastVisiblePre;
+      }
+
+      if (header && container) {
+        const rect = header.getBoundingClientRect();
+        const scrollY = window.scrollY || window.pageYOffset;
+        container.style.top = rect.bottom + scrollY + 10 + "px";
+      }
+    });
+  }
+
+  // Initial positioning
+  positionAsciiOutputContainer();
+
+  // Reposition on resize/scroll, with requestAnimationFrame and a delayed fallback
+  window.addEventListener("resize", () => {
+    positionAsciiOutputContainer();
+    setTimeout(positionAsciiOutputContainer, 100); // fallback for late layout
+  });
+  window.addEventListener("scroll", positionAsciiOutputContainer);
+
+  // Optionally, observe DOM changes in the header area
+  const splitHeader = document.getElementById("split-ascii-header");
+  const headerArea = splitHeader?.parentNode || document.body;
+  const observer = new MutationObserver(positionAsciiOutputContainer);
+  observer.observe(headerArea, {
+    attributes: true,
+    childList: true,
+    subtree: true,
+  });
+
   function setAsciiFontSize(width) {
     const baseWidth = 256; // width at which font is 8px
     const baseFontSize = 8; // starting font size in px
@@ -120,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
     newCommandOutput.classList.add("visible");
   }
 
-  // Initialize file input element
   // Autocomplete functionality
   function updateAutocompleteSuggestion() {
     const inputValue = commandInput.value.trim();
@@ -274,7 +319,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Adjust font size dynamically based on width
                 setAsciiFontSize(width);
-
                 document.getElementById("ascii").textContent = asciiArt;
               })
               .catch((error) => {
