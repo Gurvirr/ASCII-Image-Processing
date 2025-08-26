@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from PIL import Image, ImageEnhance
 import os, tempfile
 
@@ -11,6 +11,9 @@ def image_to_ascii(file_path, width):
     output = []
 
     img = Image.open(file_path)
+    original_width, original_height = img.width, img.height
+    is_portrait = original_height > original_width
+    
     img = img.convert("L")
 
     img = ImageEnhance.Contrast(img).enhance(3.0)
@@ -33,7 +36,7 @@ def image_to_ascii(file_path, width):
             row_str += ascii_chars[index]
         
         output.append(row_str)
-    return "\n".join(output)
+    return "\n".join(output), is_portrait
 
 @app.route("/")
 def home():
@@ -52,8 +55,12 @@ def ascii_convert():
         return "No file uploaded yet. Please use ?upload first.", 400
     
     width = request.args.get("width", default=256, type=int)
-    ascii_art = image_to_ascii(UPLOAD_PATH, width=width)
-    return ascii_art, 200
+    ascii_art, is_portrait = image_to_ascii(UPLOAD_PATH, width=width)
+    
+    return jsonify({
+        "ascii": ascii_art,
+        "is_portrait": is_portrait
+    }), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

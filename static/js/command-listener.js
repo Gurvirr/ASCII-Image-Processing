@@ -45,19 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
     subtree: true,
   });
 
-  function setAsciiFontSize(width) {
-    const baseWidth = 256; // width at which font is 8px
-    const baseFontSize = 8; // starting font size in px
-    const minFontSize = 1; // smallest font size allowed
+  // function setAsciiFontSize(width) {
+  //   const baseWidth = 256; // width at which font is 8px
+  //   const baseFontSize = 8; // starting font size in px
+  //   const minFontSize = 1; // smallest font size allowed
 
-    // Scale font inversely proportional to width
-    const fontSize = Math.max(
-      minFontSize,
-      Math.round(baseFontSize * (baseWidth / width)),
-    );
+  //   // Scale font inversely proportional to width
+  //   const fontSize = Math.max(
+  //     minFontSize,
+  //     Math.round(baseFontSize * (baseWidth / width)),
+  //   );
 
-    document.getElementById("ascii").style.fontSize = fontSize + "px";
-  }
+  //   document.getElementById("ascii").style.fontSize = fontSize + "px";
+  // }
 
   const commandInput = document.getElementById("command-input");
   const autocompleteSuggestion = document.getElementById(
@@ -309,17 +309,18 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch(`/ascii?width=${width}`, { method: "GET" })
               .then((response) => {
                 if (!response.ok) throw new Error("No file uploaded yet.");
-                return response.text();
+                return response.json();
               })
-              .then((asciiArt) => {
+              .then((data) => {
                 addTerminalMessage(
                   `Converted "${uploadedFileName}" to ASCII.`,
                   "system-message",
                 );
 
                 // Adjust font size dynamically based on width
-                setAsciiFontSize(width);
-                document.getElementById("ascii").textContent = asciiArt;
+                // setAsciiFontSize(width);
+                document.getElementById("ascii").textContent = data.ascii;
+                fitAsciiToContainer(data.is_portrait); // <-- pass orientation to fit function
               })
               .catch((error) => {
                 addTerminalMessage(`Error: ${error.message}`, "error-message");
