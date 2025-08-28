@@ -45,20 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     subtree: true,
   });
 
-  // function setAsciiFontSize(width) {
-  //   const baseWidth = 256; // width at which font is 8px
-  //   const baseFontSize = 8; // starting font size in px
-  //   const minFontSize = 1; // smallest font size allowed
-
-  //   // Scale font inversely proportional to width
-  //   const fontSize = Math.max(
-  //     minFontSize,
-  //     Math.round(baseFontSize * (baseWidth / width)),
-  //   );
-
-  //   document.getElementById("ascii").style.fontSize = fontSize + "px";
-  // }
-
   const commandInput = document.getElementById("command-input");
   const autocompleteSuggestion = document.getElementById(
     "autocomplete-suggestion",
@@ -71,9 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "?theme",
     "?upload",
     "?ascii",
+    "?mode",
   ];
 
   const commandDescriptions = {
+    "?mode {mode}": "Switch mode",
     "?ascii {width}": "Specify width",
     "?ascii": "Convert image to ASCII",
     "?upload": "Upload image",
@@ -82,6 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "?clear": "Clear terminal",
     "?help": "List all valid commands",
   };
+
+  let currentMode = "grayscale";
+  let lastConversionWidth = null;
+  let lastImageUploaded = false;
 
   // Initialize file input element
   const fileInput = document.createElement("input");
@@ -175,6 +167,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Autocomplete suggestion for all mode parameters (exact match)
+    if (inputValue.toLowerCase() === "?mode") {
+      autocompleteSuggestion.textContent = "grayscale/rgb/ansi";
+      autocompleteSuggestion.style.paddingLeft = `${8 + calculateTextWidth(inputValue) + 4}px`;
+      return;
+    }
+
+    // Autocomplete functionality for the 3 mode parameters (partial match)
+    if (inputValue.toLowerCase().startsWith("?mode ")) {
+      const parts = inputValue.split(" ");
+      if (parts.length === 2) {
+        const partialMode = parts[1].toLowerCase();
+        const modeOptions = ["grayscale", "rgb", "ansi"];
+
+        const matchingMode = modeOptions.find((mode) =>
+          mode.toLowerCase().startsWith(partialMode),
+        );
+
+        if (matchingMode) {
+          // Show completion for just the mode part
+          const completion = matchingMode.substring(partialMode.length);
+          autocompleteSuggestion.textContent = completion;
+          autocompleteSuggestion.style.paddingLeft = `${8 + calculateTextWidth(inputValue)}px`;
+        } else {
+          autocompleteSuggestion.textContent = "";
+        }
+        return;
+      }
+    }
     // Find a command that starts with the current input
     const matchingCommand = validCommands.find((cmd) =>
       cmd.toLowerCase().startsWith(inputValue.toLowerCase()),
@@ -219,7 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (commandText.startsWith("?")) {
         if (
           validCommands.includes(commandText) ||
-          commandText.startsWith("?ascii ")
+          commandText.startsWith("?ascii ") ||
+          commandText.startsWith("?mode ")
         ) {
           // Check if the command is in the validCommands array
           addTerminalMessage(commandText, "valid-command");
@@ -306,12 +328,18 @@ document.addEventListener("DOMContentLoaded", () => {
               return;
             }
 
-            fetch(`/ascii?width=${width}`, { method: "GET" })
+            fetch(`/ascii?width=${width}&mode=${currentMode}`, {
+              method: "GET",
+            })
               .then((response) => {
                 if (!response.ok) throw new Error("No file uploaded yet.");
                 return response.json();
               })
               .then((data) => {
+                // Store conversion parameters for ?mode command
+                lastConversionWidth = width;
+                lastImageUploaded = true;
+
                 addTerminalMessage(
                   `Converted "${uploadedFileName}" to ASCII.`,
                   "system-message",
@@ -319,12 +347,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Adjust font size dynamically based on width
                 // setAsciiFontSize(width);
-                document.getElementById("ascii").textContent = data.ascii;
+                document.getElementById("ascii").innerHTML = data.ascii;
                 fitAsciiToContainer(data.is_portrait); // <-- pass orientation to fit function
               })
               .catch((error) => {
                 addTerminalMessage(`Error: ${error.message}`, "error-message");
               });
+          }
+
+          // ?mode command
+          else if (commandText.startsWith("?mode ")) {
+            if (!lastImageUploaded || !lastConversionWidth) {
+              addTerminalMessage(
+                "No ASCII conversion found. Please use ?ascii first.",
+                "system-message",
+              );
+              return;
+            }
+
+            const parts = commandText.split(" ");
+            const newMode = parts[1]?.toLowerCase();
+
+            const allowedModes = ["grayscale", "rgb", "ansi"];
+            if (allowedModes.includes(newMode)) {
+              currentMode = newMode;
+
+              // Re-convert with new mode using stored width
+              fetch(`/ascii?width=${lastConversionWidth}&mode=${currentMode}`, {
+                method: "GET",
+              })
+                .then((response) => {
+                  if (!response.ok) throw new Error("Conversion failed.");
+                  return response.json();
+                })
+                .then((data) => {
+                  const modeText =
+                    currentMode === "rgb"
+                      ? "RGB"
+                      : currentMode === "ansi"
+                        ? "ANSI"
+                        : "Grayscale";
+                  addTerminalMessage(
+                    `Applied ${modeText} mode to existing ASCII.`,
+                    "system-message",
+                  );
+
+                  document.getElementById("ascii").innerHTML = data.ascii;
+                  fitAsciiToContainer(data.is_portrait);
+                })
+                .catch((error) => {
+                  addTerminalMessage(
+                    `Error: ${error.message}`,
+                    "error-message",
+                  );
+                });
+            } else {
+              addTerminalMessage(
+                `Invalid mode. Choose one of: ${allowedModes.join(", ")}`,
+                "error-message",
+              );
+            }
           }
         }
 

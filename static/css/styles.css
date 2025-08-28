@@ -99,6 +99,56 @@ body.side-nav-is-open .ascii-output-container {
     );
 }
 
+/* Map your ANSI colour indices to real colours */
+.c0 {
+    color: rgb(0, 0, 0);
+} /* black */
+.c1 {
+    color: rgb(128, 0, 0);
+} /* red */
+.c2 {
+    color: rgb(0, 128, 0);
+} /* green */
+.c3 {
+    color: rgb(128, 128, 0);
+} /* yellow */
+.c4 {
+    color: rgb(0, 0, 128);
+} /* blue */
+.c5 {
+    color: rgb(128, 0, 128);
+} /* magenta */
+.c6 {
+    color: rgb(0, 128, 128);
+} /* cyan */
+.c7 {
+    color: rgb(192, 192, 192);
+} /* white / light gray */
+.c8 {
+    color: rgb(128, 128, 128);
+} /* bright black (gray) */
+.c9 {
+    color: rgb(255, 0, 0);
+} /* bright red */
+.c10 {
+    color: rgb(0, 255, 0);
+} /* bright green */
+.c11 {
+    color: rgb(255, 255, 0);
+} /* bright yellow */
+.c12 {
+    color: rgb(0, 0, 255);
+} /* bright blue */
+.c13 {
+    color: rgb(255, 0, 255);
+} /* bright magenta */
+.c14 {
+    color: rgb(0, 255, 255);
+} /* bright cyan */
+.c15 {
+    color: rgb(255, 255, 255);
+} /* bright white */
+
 .status-indicator {
     position: fixed;
     top: 20px;

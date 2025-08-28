@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 from PIL import Image, ImageEnhance
+from colours import nearest_colour
 import os, tempfile
 
 app = Flask(__name__)
 UPLOAD_PATH = os.path.join(tempfile.gettempdir(), "upload_path.png")
 
-def image_to_ascii(file_path, width):
+# Function to convert an image to ASCII grayscale
+def ascii_grayscale(file_path, width):
     ascii_chars = "MNFVI*:."
-
     output = []
 
     img = Image.open(file_path)
@@ -15,14 +16,11 @@ def image_to_ascii(file_path, width):
     is_portrait = original_height > original_width
     
     img = img.convert("L")
-
     img = ImageEnhance.Contrast(img).enhance(3.0)
 
     w0, h0 = img.width, img.height
     aspect = h0 / w0
-
     height = int(aspect*width*0.5)
-
     img = img.resize((width, height))
 
     data = img.getdata()
@@ -31,17 +29,106 @@ def image_to_ascii(file_path, width):
         row_str = ""
         for col in range(width):
             pixel = (row * width) + col
+            
             luminance = data[pixel]
-            index = int(luminance/255 * (len(ascii_chars) - 1))
-            row_str += ascii_chars[index]
+            char_index = int(luminance/255 * (len(ascii_chars) - 1))
+            
+            row_str += ascii_chars[char_index]
         
         output.append(row_str)
     return "\n".join(output), is_portrait
 
+
+
+# Function to convert an image to ASCII RGB
+def ascii_rgb(file_path, width):
+    ascii_chars = "MNFVI*:."
+    output = []
+
+    img = Image.open(file_path)
+    original_width, original_height = img.width, img.height
+    is_portrait = original_height > original_width
+    
+    # Convert to RGBA to handle transparency
+    img = img.convert("RGBA")
+    img = ImageEnhance.Contrast(img).enhance(3.0)
+
+    w0, h0 = img.width, img.height
+    aspect = h0 / w0
+    height = int(aspect*width*0.5)
+    img = img.resize((width, height))
+
+    data = img.getdata()
+
+    for row in range(height):
+        row_str = ""
+        for col in range(width):
+            pixel = (row * width) + col
+            r, g, b, a = data[pixel]
+            
+            # Skip transparent pixels
+            if a == 0:
+                row_str += " "
+                continue
+            
+            luminance = int( (0.299 * r) + (0.587 * g) + (0.114 * b) )
+            char_index = int(luminance/255 * (len(ascii_chars) - 1))
+            
+            row_str += f'<span style="color: rgb({r},{g},{b})">{ascii_chars[char_index]}</span>'
+
+        output.append(row_str)
+    return "\n".join(output), is_portrait
+
+
+
+# Function to convert an image to ASCII ANSI
+def ascii_ansi(file_path, width):
+    ascii_chars = "MNFVI*:."
+    output = []
+
+    img = Image.open(file_path)
+    original_width, original_height = img.width, img.height
+    is_portrait = original_height > original_width
+    
+    # Convert to RGBA to handle transparency
+    img = img.convert("RGBA")
+    img = ImageEnhance.Contrast(img).enhance(3.0)
+
+    w0, h0 = img.width, img.height
+    aspect = h0 / w0
+    height = int(aspect*width*0.5)
+    img = img.resize((width, height))
+
+    data = img.getdata()
+
+    for row in range(height):
+        row_str = ""
+        for col in range(width):
+            pixel = (row * width) + col
+            r, g, b, a = data[pixel]
+            
+            # Skip transparent pixels
+            if a == 0:
+                row_str += " "
+                continue
+            
+            luminance = int( (0.299 * r) + (0.587 * g) + (0.114 * b) )
+            char_index = int(luminance/255 * (len(ascii_chars) - 1))
+            
+            colour_index = nearest_colour(r, g, b)
+            row_str += f'<span class="c{colour_index}">{ascii_chars[char_index]}</span>'
+
+        output.append(row_str)
+    return "\n".join(output), is_portrait
+
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
-    
+
+
+
 @app.route("/upload", methods=["POST"])
 def upload():
     file = request.files["file"]
@@ -49,18 +136,32 @@ def upload():
     
     return 'Uploaded successfully ✓', 200  # return string + status code
 
+
+
 @app.route("/ascii", methods=["GET"])
 def ascii_convert():
     if not os.path.exists(UPLOAD_PATH):
         return "No file uploaded yet. Please use ?upload first.", 400
-    
+
     width = request.args.get("width", default=256, type=int)
-    ascii_art, is_portrait = image_to_ascii(UPLOAD_PATH, width=width)
-    
+    mode = request.args.get("mode", default="grayscale")
+
+    if mode == "grayscale":
+        ascii_art, is_portrait = ascii_grayscale(UPLOAD_PATH, width)
+    elif mode == "rgb":
+        ascii_art, is_portrait = ascii_rgb(UPLOAD_PATH, width)
+    elif mode == "ansi":
+        ascii_art, is_portrait = ascii_ansi(UPLOAD_PATH, width)
+    else:
+        return "Invalid mode. Options: grayscale, rgb, ansi", 400
+
     return jsonify({
         "ascii": ascii_art,
-        "is_portrait": is_portrait
+        "is_portrait": is_portrait,
+        "mode": mode
     }), 200
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
