@@ -51,7 +51,7 @@ def ascii_rgb(file_path, width):
     
     # Convert to RGBA to handle transparency
     img = img.convert("RGBA")
-    img = ImageEnhance.Contrast(img).enhance(3.0)
+    img = ImageEnhance.Color(img).enhance(1.75)
 
     w0, h0 = img.width, img.height
     aspect = h0 / w0
@@ -92,7 +92,7 @@ def ascii_ansi(file_path, width):
     
     # Convert to RGBA to handle transparency
     img = img.convert("RGBA")
-    img = ImageEnhance.Contrast(img).enhance(3.0)
+    img = ImageEnhance.Color(img).enhance(1.75)
 
     w0, h0 = img.width, img.height
     aspect = h0 / w0
