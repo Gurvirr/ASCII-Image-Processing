@@ -33,16 +33,16 @@ def ascii_grayscale(file_path, width, inverted=False):
     data = img.getdata()
 
     for row in range(height):
-        row_str = ""
+        row_chars = []
         for col in range(width):
             pixel = (row * width) + col
             
             luminance = data[pixel]
             char_index = int(luminance/255 * (len(ascii_chars) - 1))
             
-            row_str += ascii_chars[char_index]
+            row_chars.append(ascii_chars[char_index])
         
-        output.append(row_str)
+        output.append("".join(row_chars))
     return "\n".join(output), is_portrait
 
 
@@ -68,22 +68,22 @@ def ascii_rgb(file_path, width, inverted=False):
     data = img.getdata()
 
     for row in range(height):
-        row_str = ""
+        row_chars = []
         for col in range(width):
             pixel = (row * width) + col
             r, g, b, a = data[pixel]
             
             # Skip transparent pixels
             if a == 0:
-                row_str += " "
+                row_chars.append(" ")
                 continue
             
             luminance = int( (0.299 * r) + (0.587 * g) + (0.114 * b) )
             char_index = int(luminance/255 * (len(ascii_chars) - 1))
             
-            row_str += f'<span style="color: rgb({r},{g},{b})">{ascii_chars[char_index]}</span>'
+            row_chars.append(f'<span style="color:rgb({r},{g},{b})">{ascii_chars[char_index]}</span>')
 
-        output.append(row_str)
+        output.append("".join(row_chars))
     return "\n".join(output), is_portrait
 
 
@@ -109,23 +109,23 @@ def ascii_ansi(file_path, width, inverted=False):
     data = img.getdata()
 
     for row in range(height):
-        row_str = ""
+        row_chars = []
         for col in range(width):
             pixel = (row * width) + col
             r, g, b, a = data[pixel]
             
             # Skip transparent pixels
             if a == 0:
-                row_str += " "
+                row_chars.append(" ")
                 continue
             
             luminance = int( (0.299 * r) + (0.587 * g) + (0.114 * b) )
             char_index = int(luminance/255 * (len(ascii_chars) - 1))
             
             colour_index = nearest_colour(r, g, b)
-            row_str += f'<span class="c{colour_index}">{ascii_chars[char_index]}</span>'
+            row_chars.append(f'<span class="c{colour_index}">{ascii_chars[char_index]}</span>')
 
-        output.append(row_str)
+        output.append("".join(row_chars))
     return "\n".join(output), is_portrait
 
 
