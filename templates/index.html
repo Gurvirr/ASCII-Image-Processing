@@ -4,6 +4,24 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>ASCII Image Processing</title>
+
+        <!-- Open Graph Meta Tags start -->
+        <meta property="og:title" content="ASCII Image Processing" />
+        <meta
+            property="og:description"
+            content="A comprehensive terminal-inspired web app for processing images using ASCII characters. Endless customizability."
+        />
+        <meta
+            property="og:url"
+            content="https://ascii-image-processing.vercel.app"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+            property="og:image"
+            content="{{ url_for('static', filename='images/og_preview.png') }}"
+        />
+        <!-- Open Graph Meta Tags end -->
+
         <link
             rel="icon"
             href="{{ url_for('static', filename='favicon.ico') }}"
