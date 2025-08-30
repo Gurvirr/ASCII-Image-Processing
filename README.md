@@ -10,6 +10,6 @@
 - [ ] Look into adding a generatable link to share ASCII output
 - [ ] Customize the embed for the URL
 - [ ] Add navigatable terminal history using up/down arrow keys
-- [ ] Add command for inverting character palette
+- [x] Add command for inverting character palette
 - [ ] Create MIT license
 - [ ] Write a comprehensive README.md

@@ -58,9 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "?upload",
     "?ascii",
     "?mode",
+    "?invert",
   ];
 
   const commandDescriptions = {
+    "?invert": "Invert ASCII palette",
     "?mode {mode}": "Switch mode",
     "?ascii {width}": "Specify width",
     "?ascii": "Convert image to ASCII",
@@ -74,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentMode = "grayscale";
   let lastConversionWidth = null;
   let lastImageUploaded = false;
+  let isInverted = false;
 
   // Initialize file input element
   const fileInput = document.createElement("input");
@@ -328,9 +331,12 @@ document.addEventListener("DOMContentLoaded", () => {
               return;
             }
 
-            fetch(`/ascii?width=${width}&mode=${currentMode}`, {
-              method: "GET",
-            })
+            fetch(
+              `/ascii?width=${width}&mode=${currentMode}&invert=${isInverted}`,
+              {
+                method: "GET",
+              },
+            )
               .then((response) => {
                 if (!response.ok) throw new Error("No file uploaded yet.");
                 return response.json();
@@ -373,9 +379,12 @@ document.addEventListener("DOMContentLoaded", () => {
               currentMode = newMode;
 
               // Re-convert with new mode using stored width
-              fetch(`/ascii?width=${lastConversionWidth}&mode=${currentMode}`, {
-                method: "GET",
-              })
+              fetch(
+                `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}`,
+                {
+                  method: "GET",
+                },
+              )
                 .then((response) => {
                   if (!response.ok) throw new Error("Conversion failed.");
                   return response.json();
@@ -406,6 +415,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 `Invalid mode. Choose one of: ${allowedModes.join(", ")}`,
                 "error-message",
               );
+            }
+          }
+
+          // ?invert command
+          else if (commandText === "?invert") {
+            isInverted = !isInverted;
+            addTerminalMessage(
+              `Character inversion ${isInverted ? "enabled" : "disabled"}.`,
+              "system-message",
+            );
+
+            // Re-convert if image exists
+            if (lastImageUploaded && lastConversionWidth) {
+              fetch(
+                `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}`,
+                {
+                  method: "GET",
+                },
+              )
+                .then((response) => {
+                  if (!response.ok) throw new Error("Re-conversion failed.");
+                  return response.json();
+                })
+                .then((data) => {
+                  addTerminalMessage(
+                    `Applied inversion to existing ASCII.`,
+                    "system-message",
+                  );
+
+                  document.getElementById("ascii").innerHTML = data.ascii;
+                  fitAsciiToContainer(data.is_portrait);
+                })
+                .catch((error) => {
+                  addTerminalMessage(
+                    `Error: ${error.message}`,
+                    "error-message",
+                  );
+                });
             }
           }
         }

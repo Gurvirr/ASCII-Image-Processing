@@ -6,9 +6,16 @@ import os, tempfile
 app = Flask(__name__)
 UPLOAD_PATH = os.path.join(tempfile.gettempdir(), "upload_path.png")
 
+# Function to get ASCII character set
+def get_ascii_chars(inverted = False):
+    base_chars = "MNFVI*:."
+    if inverted:
+        return base_chars[::-1]
+    return base_chars
+
 # Function to convert an image to ASCII grayscale
-def ascii_grayscale(file_path, width):
-    ascii_chars = "MNFVI*:."
+def ascii_grayscale(file_path, width, inverted=False):
+    ascii_chars = get_ascii_chars(inverted)
     output = []
 
     img = Image.open(file_path)
@@ -41,8 +48,8 @@ def ascii_grayscale(file_path, width):
 
 
 # Function to convert an image to ASCII RGB
-def ascii_rgb(file_path, width):
-    ascii_chars = "MNFVI*:."
+def ascii_rgb(file_path, width, inverted=False):
+    ascii_chars = get_ascii_chars(inverted)
     output = []
 
     img = Image.open(file_path)
@@ -82,8 +89,8 @@ def ascii_rgb(file_path, width):
 
 
 # Function to convert an image to ASCII ANSI
-def ascii_ansi(file_path, width):
-    ascii_chars = "MNFVI*:."
+def ascii_ansi(file_path, width, inverted=False):
+    ascii_chars = get_ascii_chars(inverted)
     output = []
 
     img = Image.open(file_path)
@@ -145,20 +152,22 @@ def ascii_convert():
 
     width = request.args.get("width", default=256, type=int)
     mode = request.args.get("mode", default="grayscale")
+    inverted = request.args.get("invert", default="false").lower() == "true"
 
     if mode == "grayscale":
-        ascii_art, is_portrait = ascii_grayscale(UPLOAD_PATH, width)
+        ascii_art, is_portrait = ascii_grayscale(UPLOAD_PATH, width, inverted)
     elif mode == "rgb":
-        ascii_art, is_portrait = ascii_rgb(UPLOAD_PATH, width)
+        ascii_art, is_portrait = ascii_rgb(UPLOAD_PATH, width, inverted)
     elif mode == "ansi":
-        ascii_art, is_portrait = ascii_ansi(UPLOAD_PATH, width)
+        ascii_art, is_portrait = ascii_ansi(UPLOAD_PATH, width, inverted)
     else:
         return "Invalid mode. Options: grayscale, rgb, ansi", 400
 
     return jsonify({
         "ascii": ascii_art,
         "is_portrait": is_portrait,
-        "mode": mode
+        "mode": mode,
+        "inverted": inverted
     }), 200
 
 
