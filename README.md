@@ -8,7 +8,7 @@
 - [x] ~~Add colour support (RGB/ANSI)~~
 - [ ] Add functionality to export ASCII output to .txt or a custom .png
 - [ ] Look into adding a generatable link to share ASCII output
-- [ ] Customize the embed for the URL
+- [x] Customize the embed for the URL
 - [ ] Add navigatable terminal history using up/down arrow keys
 - [x] Add command for inverting character palette
 - [ ] Create MIT license
