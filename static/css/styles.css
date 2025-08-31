@@ -459,6 +459,16 @@ body.terminal-large-font #side-nav-panel #command-input {
     opacity: 0.4 !important; /* Make text faint, similar to placeholder text */
 }
 
+/* Styling for selected palette option (darker/more prominent than system-message) */
+#side-nav-panel #command-output-container p.selected-option.visible::before {
+    content: ""; /* No chevron character */
+}
+
+#side-nav-panel #command-output-container p.selected-option.visible {
+    padding-left: 0; /* Text starts from the far left */
+    opacity: 0.7 !important; /* Darker than system-message for better visibility */
+}
+
 /* Dark theme adjustments for side-nav-panel elements are mostly handled by color inheritance */
 /* Specific adjustments if needed would go in body.dark-theme #side-nav-panel ... */
 

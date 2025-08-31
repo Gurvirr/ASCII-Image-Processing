@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   const validCommands = [
+    "?palette",
     "?help",
     "?clear",
     "?size",
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const commandDescriptions = {
+    "?palette": "Select new palette",
     "?invert": "Invert ASCII palette",
     "?mode {mode}": "Switch mode",
     "?ascii {width}": "Specify width",
@@ -73,10 +75,58 @@ document.addEventListener("DOMContentLoaded", () => {
     "?help": "List all valid commands",
   };
 
+  const paletteMenu = {
+    "custom:": "custom",
+    "complex:":
+      "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'.",
+    "default:": "MNFVI*:.",
+  };
+
   let currentMode = "grayscale";
   let lastConversionWidth = null;
   let lastImageUploaded = false;
   let isInverted = false;
+  let inPaletteMenu = false;
+  let paletteMenuIndex = 2; // Current selected index (start at "default")
+  let isNavigatingMenu = false; // True when using arrow keys, false when typing
+
+  // Function to display the palette menu
+  function displayPaletteMenu(withAnimation = true) {
+    // Define the order we want
+    let paletteOrder = ["custom", "complex", "default"];
+
+    if (withAnimation) {
+      // Don't clear messages on initial display to preserve command message
+      // Create new elements with animation
+      for (let i = 0; i < paletteOrder.length; i++) {
+        let paletteName = paletteOrder[i];
+        if (i === paletteMenuIndex) {
+          addTerminalMessage("\u00A0\u00A0> " + paletteName, "selected-option"); // Selected option
+        } else {
+          addTerminalMessage("\u00A0\u00A0" + paletteName, "system-message"); // Other options (with spaces)
+        }
+      }
+
+      // Add opened message after menu so it appears at the top
+      addTerminalMessage("Select your character palette:", "system-message");
+    } else {
+      // Update existing elements in place (no animation)
+      const outputs = commandOutputContainer.querySelectorAll("p");
+      for (let i = 0; i < 3; i++) {
+        if (outputs[i + 1]) {
+          // Skip the first element (opened message)
+          let paletteName = paletteOrder[2 - i]; // Reverse index to match prepended order
+          if (2 - i === paletteMenuIndex) {
+            outputs[i + 1].textContent = "\u00A0\u00A0> " + paletteName; // Selected option
+            outputs[i + 1].className = "selected-option visible";
+          } else {
+            outputs[i + 1].textContent = "\u00A0\u00A0" + paletteName; // Other options (with spaces)
+            outputs[i + 1].className = "system-message visible";
+          }
+        }
+      }
+    }
+  }
 
   // Initialize file input element
   const fileInput = document.createElement("input");
@@ -229,6 +279,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Complete the suggestion on Tab key
   commandInput.addEventListener("keydown", function (event) {
+    // Handle palette menu navigation (only intercept specific keys)
+    if (inPaletteMenu) {
+      // Arrow Up key
+      if (event.key === "ArrowUp") {
+        // Handle arrow up in palette menu
+        isNavigatingMenu = true;
+        event.preventDefault();
+
+        paletteMenuIndex = (paletteMenuIndex + 1) % 3;
+        displayPaletteMenu(false);
+        return;
+      }
+
+      // Arrow Down key
+      else if (event.key === "ArrowDown") {
+        // Handle arrow down in palette menu
+        isNavigatingMenu = true;
+        event.preventDefault();
+
+        paletteMenuIndex = (paletteMenuIndex - 1 + 3) % 3;
+        displayPaletteMenu(false);
+        return;
+      }
+
+      // Enter key
+      else if (event.key === "Enter") {
+        if (isNavigatingMenu) {
+          // Select the current menu option
+          event.preventDefault();
+          return;
+        }
+      }
+
+      // Escape key
+      else if (event.key === "Escape") {
+        // Exit palette menu and clear it from history
+        inPaletteMenu = false;
+        isNavigatingMenu = false;
+
+        // Remove the palette menu items from terminal history
+        const outputs = commandOutputContainer.querySelectorAll("p");
+        for (let i = 0; i < 4; i++) {
+          if (outputs[i]) {
+            outputs[i].remove();
+          }
+        }
+
+        addTerminalMessage("Palette menu closed.", "system-message");
+        event.preventDefault();
+        event.stopPropagation(); // Prevent nav panel from closing
+        return;
+      }
+
+      // Other keys
+      else {
+        // Any other key (typing) means we're no longer navigating the menu
+        isNavigatingMenu = false;
+      }
+    }
+
+    // Normal command processing when not in palette menu
     if (event.key === "Tab" && autocompleteSuggestion.textContent) {
       event.preventDefault();
       commandInput.value += autocompleteSuggestion.textContent;
@@ -240,6 +351,22 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const commandText = commandInput.value.trim().toLowerCase();
 
+      // Close palette menu if any command is entered (valid or invalid)
+      if (inPaletteMenu) {
+        inPaletteMenu = false;
+        isNavigatingMenu = false;
+
+        // Remove the palette menu items from terminal history
+        const outputs = commandOutputContainer.querySelectorAll("p");
+        for (let i = 0; i < 4; i++) {
+          if (outputs[i]) {
+            outputs[i].remove();
+          }
+        }
+
+        addTerminalMessage("Palette menu closed.", "system-message");
+      }
+
       if (commandText.startsWith("?")) {
         if (
           validCommands.includes(commandText) ||
@@ -247,6 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
           commandText.startsWith("?mode ")
         ) {
           // Check if the command is in the validCommands array
+
           addTerminalMessage(commandText, "valid-command");
 
           // ?help command
@@ -454,6 +582,16 @@ document.addEventListener("DOMContentLoaded", () => {
                   );
                 });
             }
+          }
+
+          // ?palette command
+          else if (commandText === "?palette") {
+            inPaletteMenu = true;
+            isNavigatingMenu = false; // Start in typing mode, not navigation mode
+
+            paletteMenuIndex = 2; // Point to "default" which is now at index 2
+
+            displayPaletteMenu();
           }
         }
 
