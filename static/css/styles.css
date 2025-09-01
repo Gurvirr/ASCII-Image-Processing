@@ -617,6 +617,37 @@ body.dark-theme #side-nav-panel {
     }
 }
 
+/* Palette menu inline input styling */
+.palette-input-container {
+    display: inline-flex;
+    align-items: baseline;
+    vertical-align: top;
+}
+
+.palette-inline-input {
+    background: transparent;
+    border: none;
+    color: inherit;
+    padding: 0px 4px;
+    width: 120px;
+    font-size: inherit;
+    font-family: inherit;
+    margin-left: 5px;
+    line-height: inherit;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.palette-inline-input::placeholder {
+    color: #666;
+    opacity: 0.7;
+}
+
+body.dark-theme .palette-inline-input::placeholder {
+    color: #999;
+    opacity: 0.7;
+}
+
 /* New media query for side-nav open and max-width 1160px */
 @media (max-width: 1160px) {
     body.side-nav-is-open pre#ascii-header {

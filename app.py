@@ -6,16 +6,36 @@ import os, tempfile
 app = Flask(__name__)
 UPLOAD_PATH = os.path.join(tempfile.gettempdir(), "upload_path.png")
 
+# Palette definitions
+PALETTE_CHARS = {
+    "default": "MNFVI*:.",
+    "complex": "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'.",
+    "custom": "MNFVI*:."
+}
+
+# Function to escape HTML characters
+def escape_html_char(char):
+    if char == '<':
+        return '&lt;'
+    elif char == '>':
+        return '&gt;'
+    elif char == '&':
+        return '&amp;'
+    else:
+        return char
+
 # Function to get ASCII character set
-def get_ascii_chars(inverted = False):
-    base_chars = "MNFVI*:."
+def get_ascii_chars(inverted = False, palette=None):
+    if palette is None:
+        palette = "MNFVI*:."
+
     if inverted:
-        return base_chars[::-1]
-    return base_chars
+        return palette[::-1]
+    return palette
 
 # Function to convert an image to ASCII grayscale
-def ascii_grayscale(file_path, width, inverted=False):
-    ascii_chars = get_ascii_chars(inverted)
+def ascii_grayscale(file_path, width, inverted=False, palette=None):
+    ascii_chars = get_ascii_chars(inverted, palette)
     output = []
 
     img = Image.open(file_path)
@@ -40,7 +60,8 @@ def ascii_grayscale(file_path, width, inverted=False):
             luminance = data[pixel]
             char_index = int(luminance/255 * (len(ascii_chars) - 1))
             
-            row_chars.append(ascii_chars[char_index])
+            char = escape_html_char(ascii_chars[char_index])
+            row_chars.append(char)
         
         output.append("".join(row_chars))
     return "\n".join(output), is_portrait
@@ -48,8 +69,8 @@ def ascii_grayscale(file_path, width, inverted=False):
 
 
 # Function to convert an image to ASCII RGB
-def ascii_rgb(file_path, width, inverted=False):
-    ascii_chars = get_ascii_chars(inverted)
+def ascii_rgb(file_path, width, inverted=False, palette=None):
+    ascii_chars = get_ascii_chars(inverted, palette)
     output = []
 
     img = Image.open(file_path)
@@ -81,7 +102,8 @@ def ascii_rgb(file_path, width, inverted=False):
             luminance = int( (0.299 * r) + (0.587 * g) + (0.114 * b) )
             char_index = int(luminance/255 * (len(ascii_chars) - 1))
             
-            row_chars.append(f'<span style="color:rgb({r},{g},{b})">{ascii_chars[char_index]}</span>')
+            char = escape_html_char(ascii_chars[char_index])
+            row_chars.append(f'<span style="color:rgb({r},{g},{b})">{char}</span>')
 
         output.append("".join(row_chars))
     return "\n".join(output), is_portrait
@@ -89,8 +111,8 @@ def ascii_rgb(file_path, width, inverted=False):
 
 
 # Function to convert an image to ASCII ANSI
-def ascii_ansi(file_path, width, inverted=False):
-    ascii_chars = get_ascii_chars(inverted)
+def ascii_ansi(file_path, width, inverted=False, palette=None):
+    ascii_chars = get_ascii_chars(inverted, palette)
     output = []
 
     img = Image.open(file_path)
@@ -123,7 +145,8 @@ def ascii_ansi(file_path, width, inverted=False):
             char_index = int(luminance/255 * (len(ascii_chars) - 1))
             
             colour_index = nearest_colour(r, g, b)
-            row_chars.append(f'<span class="c{colour_index}">{ascii_chars[char_index]}</span>')
+            char = escape_html_char(ascii_chars[char_index])
+            row_chars.append(f'<span class="c{colour_index}">{char}</span>')
 
         output.append("".join(row_chars))
     return "\n".join(output), is_portrait
@@ -153,13 +176,21 @@ def ascii_convert():
     width = request.args.get("width", default=256, type=int)
     mode = request.args.get("mode", default="grayscale")
     inverted = request.args.get("invert", default="false").lower() == "true"
+    palette_name = request.args.get("palette", default="default")
+    custom_chars = request.args.get("custom_chars", default="")
+    
+    # Look up the actual characters for the palette name
+    if palette_name == "custom" and custom_chars:
+        palette = custom_chars
+    else:
+        palette = PALETTE_CHARS.get(palette_name, "MNFVI*:.")
 
     if mode == "grayscale":
-        ascii_art, is_portrait = ascii_grayscale(UPLOAD_PATH, width, inverted)
+        ascii_art, is_portrait = ascii_grayscale(UPLOAD_PATH, width, inverted, palette)
     elif mode == "rgb":
-        ascii_art, is_portrait = ascii_rgb(UPLOAD_PATH, width, inverted)
+        ascii_art, is_portrait = ascii_rgb(UPLOAD_PATH, width, inverted, palette)
     elif mode == "ansi":
-        ascii_art, is_portrait = ascii_ansi(UPLOAD_PATH, width, inverted)
+        ascii_art, is_portrait = ascii_ansi(UPLOAD_PATH, width, inverted, palette)
     else:
         return "Invalid mode. Options: grayscale, rgb, ansi", 400
 

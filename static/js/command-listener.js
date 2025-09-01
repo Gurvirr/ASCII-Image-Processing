@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   const validCommands = [
-    "?palette",
     "?help",
     "?clear",
     "?size",
@@ -60,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "?ascii",
     "?mode",
     "?invert",
+    "?palette",
   ];
 
   const commandDescriptions = {
@@ -75,14 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "?help": "List all valid commands",
   };
 
-  const paletteMenu = {
-    "custom:": "custom",
-    "complex:":
-      "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'.",
-    "default:": "MNFVI*:.",
-  };
-
   let currentMode = "grayscale";
+  let currentPalette = "default";
+  let currentCustomChars = "";
   let lastConversionWidth = null;
   let lastImageUploaded = false;
   let isInverted = false;
@@ -305,8 +300,195 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Enter key
       else if (event.key === "Enter") {
-        if (isNavigatingMenu) {
+        if (inPaletteMenu) {
+          // Check if image has been converted first
+          if (!lastImageUploaded || !lastConversionWidth) {
+            // Exit palette menu and show error
+            inPaletteMenu = false;
+            isNavigatingMenu = false;
+
+            // Remove the palette menu items from terminal history
+            const outputs = commandOutputContainer.querySelectorAll("p");
+            for (let i = 0; i < 4; i++) {
+              if (outputs[i]) {
+                outputs[i].remove();
+              }
+            }
+
+            addTerminalMessage(
+              "Please upload and convert an image with ?ascii first.",
+              "system-message",
+            );
+            event.preventDefault();
+            return;
+          }
+
           // Select the current menu option
+          const paletteOrder = ["custom", "complex", "default"];
+          const selectedPalette = paletteOrder[paletteMenuIndex];
+
+          if (selectedPalette === "custom") {
+            // Create inline input for custom palette
+            const outputs = commandOutputContainer.querySelectorAll("p");
+            // Find the custom option line by looking for the one with "custom" text
+            let customOption = null;
+            for (let i = 0; i < outputs.length; i++) {
+              if (
+                outputs[i].textContent.includes("custom") &&
+                outputs[i].classList.contains("selected-option")
+              ) {
+                customOption = outputs[i];
+                break;
+              }
+            }
+
+            if (customOption) {
+              // Store original styling to restore on escape
+              const originalText = customOption.textContent;
+              const originalClass = customOption.className;
+
+              // Add CSS class for inline layout
+              customOption.classList.add("palette-input-container");
+
+              // Keep the existing text and just append input
+              const currentText = customOption.textContent;
+              customOption.innerHTML = "";
+
+              // Add the text part with original styling preserved
+              const textSpan = document.createElement("span");
+              textSpan.textContent = currentText + " ";
+              customOption.appendChild(textSpan);
+
+              // Create input element with CSS class
+              const input = document.createElement("input");
+              input.type = "text";
+              input.placeholder = "e.g., @#$%.:";
+              input.className = "palette-inline-input";
+
+              // Add input inline
+              customOption.appendChild(input);
+              input.focus();
+
+              // Handle input submission
+              input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                  const customChars = input.value.trim();
+                  if (customChars.length > 0) {
+                    // Exit palette menu
+                    inPaletteMenu = false;
+                    isNavigatingMenu = false;
+
+                    // Remove menu items
+                    for (let i = 0; i < 4; i++) {
+                      if (outputs[i]) {
+                        outputs[i].remove();
+                      }
+                    }
+
+                    // Send custom palette request
+                    // Update current palette state
+                    currentPalette = "custom";
+                    currentCustomChars = customChars;
+
+                    fetch(
+                      `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}&palette=custom&custom_chars=${encodeURIComponent(customChars)}`,
+                      {
+                        method: "GET",
+                      },
+                    )
+                      .then((response) => {
+                        if (!response.ok) throw new Error("Conversion failed.");
+                        return response.json();
+                      })
+                      .then((data) => {
+                        addTerminalMessage(
+                          `Applied custom palette: ${customChars}`,
+                          "system-message",
+                        );
+
+                        document.getElementById("ascii").innerHTML = data.ascii;
+                        fitAsciiToContainer(data.is_portrait);
+
+                        // Return focus to main command input
+                        commandInput.focus();
+                      })
+                      .catch((error) => {
+                        addTerminalMessage(
+                          `Error: ${error.message}`,
+                          "error-message",
+                        );
+
+                        // Return focus to main command input even on error
+                        commandInput.focus();
+                      });
+                  }
+                } else if (e.key === "Escape") {
+                  // Prevent event from bubbling up
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  // Exit palette menu completely
+                  inPaletteMenu = false;
+                  isNavigatingMenu = false;
+
+                  // Remove menu items
+                  const outputs = commandOutputContainer.querySelectorAll("p");
+                  for (let i = 0; i < 4; i++) {
+                    if (outputs[i]) {
+                      outputs[i].remove();
+                    }
+                  }
+
+                  addTerminalMessage("Palette menu closed.", "system-message");
+
+                  // Return focus to main command input
+                  commandInput.focus();
+                }
+              });
+            }
+          } else {
+            // Handle predefined palettes
+            // Exit palette menu
+            inPaletteMenu = false;
+            isNavigatingMenu = false;
+
+            // Remove the palette menu items from terminal history
+            const outputs = commandOutputContainer.querySelectorAll("p");
+            for (let i = 0; i < 4; i++) {
+              if (outputs[i]) {
+                outputs[i].remove();
+              }
+            }
+
+            // Re-convert with selected palette - send just the name
+            // Update current palette state
+            currentPalette = selectedPalette;
+            currentCustomChars = "";
+
+            fetch(
+              `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}&palette=${selectedPalette}`,
+              {
+                method: "GET",
+              },
+            )
+              .then((response) => {
+                if (!response.ok) throw new Error("Conversion failed.");
+                return response.json();
+              })
+              .then((data) => {
+                addTerminalMessage(
+                  `Applied ${selectedPalette} palette to "${uploadedFileName}".`,
+                  "system-message",
+                );
+
+                document.getElementById("ascii").innerHTML = data.ascii;
+                fitAsciiToContainer(data.is_portrait);
+              })
+              .catch((error) => {
+                addTerminalMessage(`Error: ${error.message}`, "error-message");
+              });
+          }
+
           event.preventDefault();
           return;
         }
@@ -459,8 +641,13 @@ document.addEventListener("DOMContentLoaded", () => {
               return;
             }
 
+            const paletteParams =
+              currentPalette === "custom" && currentCustomChars
+                ? `&palette=custom&custom_chars=${encodeURIComponent(currentCustomChars)}`
+                : `&palette=${currentPalette}`;
+
             fetch(
-              `/ascii?width=${width}&mode=${currentMode}&invert=${isInverted}`,
+              `/ascii?width=${width}&mode=${currentMode}&invert=${isInverted}${paletteParams}`,
               {
                 method: "GET",
               },
@@ -507,8 +694,13 @@ document.addEventListener("DOMContentLoaded", () => {
               currentMode = newMode;
 
               // Re-convert with new mode using stored width
+              const paletteParams =
+                currentPalette === "custom" && currentCustomChars
+                  ? `&palette=custom&custom_chars=${encodeURIComponent(currentCustomChars)}`
+                  : `&palette=${currentPalette}`;
+
               fetch(
-                `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}`,
+                `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}${paletteParams}`,
                 {
                   method: "GET",
                 },
@@ -556,8 +748,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Re-convert if image exists
             if (lastImageUploaded && lastConversionWidth) {
+              const paletteParams =
+                currentPalette === "custom" && currentCustomChars
+                  ? `&palette=custom&custom_chars=${encodeURIComponent(currentCustomChars)}`
+                  : `&palette=${currentPalette}`;
+
               fetch(
-                `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}`,
+                `/ascii?width=${lastConversionWidth}&mode=${currentMode}&invert=${isInverted}${paletteParams}`,
                 {
                   method: "GET",
                 },
@@ -587,7 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // ?palette command
           else if (commandText === "?palette") {
             inPaletteMenu = true;
-            isNavigatingMenu = false; // Start in typing mode, not navigation mode
+            isNavigatingMenu = true; // Allow Enter to work immediately
 
             paletteMenuIndex = 2; // Point to "default" which is now at index 2
 
