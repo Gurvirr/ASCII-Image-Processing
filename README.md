@@ -1,3 +1,4 @@
+![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FGurvirr%2FASCII-Image-Processing&label=Views&labelColor=%23faf6ef&countColor=%230d0d0e)
 ![image](https://github.com/user-attachments/assets/21a1b24b-3102-4ec9-8e89-05a44584e77b)
 
 ## TODO List
