@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
               // Create input element with CSS class
               const input = document.createElement("input");
               input.type = "text";
-              input.placeholder = "e.g., @#$%.:";
+              input.placeholder = "e.g. @#$%:.";
               input.className = "palette-inline-input";
 
               // Add input inline
